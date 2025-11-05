@@ -1,4 +1,4 @@
-package com.jintakkim.evaluate.domain;
+package com.jintakkim.core;
 
 public record LabeledPost(
         PostFeature feature,

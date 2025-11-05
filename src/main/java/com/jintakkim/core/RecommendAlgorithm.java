@@ -1,6 +1,4 @@
-package com.jintakkim.evaluate;
-
-import com.jintakkim.evaluate.domain.PostFeature;
+package com.jintakkim.core;
 
 @FunctionalInterface
 public interface RecommendAlgorithm {
