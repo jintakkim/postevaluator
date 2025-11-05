@@ -1,6 +1,6 @@
-package com.jintakkim.evaluate;
+package com.jintakkim.postevaluator.evaluate;
 
-import com.jintakkim.evaluate.metric.AlgorithmMetric;
+import com.jintakkim.postevaluator.evaluate.metric.AlgorithmMetric;
 
 public record EvaluateResult(
         // 사용된 평가 지표

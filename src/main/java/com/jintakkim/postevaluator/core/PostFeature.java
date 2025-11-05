@@ -1,4 +1,4 @@
-package com.jintakkim.core;
+package com.jintakkim.postevaluator.core;
 
 import java.time.LocalDateTime;
 
