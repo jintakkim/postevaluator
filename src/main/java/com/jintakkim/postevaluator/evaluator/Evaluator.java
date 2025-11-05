@@ -1,4 +1,4 @@
-package com.jintakkim.postevaluator.evaluate;
+package com.jintakkim.postevaluator.evaluator;
 
 import com.jintakkim.postevaluator.core.RecommendAlgorithm;
 

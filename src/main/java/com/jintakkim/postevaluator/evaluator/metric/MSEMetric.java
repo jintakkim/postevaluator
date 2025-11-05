@@ -1,4 +1,4 @@
-package com.jintakkim.postevaluator.evaluate.metric;
+package com.jintakkim.postevaluator.evaluator.metric;
 
 import lombok.RequiredArgsConstructor;
 
