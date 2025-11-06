@@ -5,7 +5,7 @@ import com.jintakkim.postevaluator.core.LabeledPost;
 import java.util.List;
 
 public interface LabeledPostRepository {
-    void save(LabeledPost post);
+    LabeledPost save(LabeledPost post);
     List<Long> findUnlabeledFeatureIds();
     List<LabeledPost> findAll();
 }

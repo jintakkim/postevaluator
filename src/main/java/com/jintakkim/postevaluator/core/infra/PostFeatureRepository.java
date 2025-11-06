@@ -6,6 +6,6 @@ import java.util.Collection;
 import java.util.List;
 
 public interface PostFeatureRepository {
-    void save(PostFeature postFeature);
+    PostFeature save(PostFeature postFeature);
     List<PostFeature> findByIdIn(Collection<Long> ids);
 }
