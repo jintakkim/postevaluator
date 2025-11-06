@@ -5,6 +5,7 @@ public record LabeledPost(
         long featureId,
         double score,
         String reasoning,
-        String labeledModel
+        //래이블링 과정에 사용된 모델
+        String model
 ) {
 }
