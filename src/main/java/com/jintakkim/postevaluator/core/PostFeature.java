@@ -1,7 +1,5 @@
 package com.jintakkim.postevaluator.core;
 
-import java.time.LocalDateTime;
-
 public record PostFeature(
         long id,
         long viewCount,
@@ -9,6 +7,6 @@ public record PostFeature(
         long dislikeCount,
         long commentCount,
         String content,
-        LocalDateTime createdAt
+        String createdAt
 ) {
 }
