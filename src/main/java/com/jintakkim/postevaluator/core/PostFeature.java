@@ -3,6 +3,7 @@ package com.jintakkim.postevaluator.core;
 import java.time.LocalDateTime;
 
 public record PostFeature(
+        long id,
         long viewCount,
         long likeCount,
         long dislikeCount,
