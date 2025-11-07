@@ -23,8 +23,8 @@ public class DbConfig {
         jdbi.registerRowMapper(LabeledPost.class, new LabeledPostMapper());
         this.jdbi = jdbi;
         initializeDatabaseSchema();
-        this.postFeatureRepository = new LocalFilePostFeatureRepository(jdbi);
-        this.labeledPostRepository = new LocalFileLabeledPostRepository(jdbi);
+        this.postFeatureRepository = new JdbiPostFeatureRepository(jdbi);
+        this.labeledPostRepository = new JdbiLabeledPostRepository(jdbi);
     }
 
     /**

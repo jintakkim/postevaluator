@@ -5,10 +5,10 @@ import org.jdbi.v3.core.Jdbi;
 
 import java.util.List;
 
-public class LocalFileLabeledPostRepository implements LabeledPostRepository {
+public class JdbiLabeledPostRepository implements LabeledPostRepository {
     private final Jdbi jdbi;
 
-    public LocalFileLabeledPostRepository(Jdbi jdbi) {
+    public JdbiLabeledPostRepository(Jdbi jdbi) {
         this.jdbi = jdbi;
     }
 

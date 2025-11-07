@@ -6,10 +6,10 @@ import org.jdbi.v3.core.Jdbi;
 import java.util.Collection;
 import java.util.List;
 
-public class LocalFilePostFeatureRepository implements PostFeatureRepository {
+public class JdbiPostFeatureRepository implements PostFeatureRepository {
     private final Jdbi jdbi;
 
-    public LocalFilePostFeatureRepository(Jdbi jdbi) {
+    public JdbiPostFeatureRepository(Jdbi jdbi) {
         this.jdbi = jdbi;
     }
 
