@@ -1,7 +1,7 @@
 package com.jintakkim.postevaluator.core;
 
 public record PostFeature(
-        long id,
+        Long id,
         long viewCount,
         long likeCount,
         long dislikeCount,
@@ -9,4 +9,7 @@ public record PostFeature(
         String content,
         String createdAt
 ) {
+    public PostFeature(long viewCount, long likeCount, long dislikeCount, long commentCount, String content, String createdAt) {
+        this(null, viewCount, likeCount, dislikeCount, commentCount, content, createdAt);
+    }
 }
