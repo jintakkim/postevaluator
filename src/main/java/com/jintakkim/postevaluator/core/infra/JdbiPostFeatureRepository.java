@@ -22,7 +22,7 @@ public class JdbiPostFeatureRepository implements PostFeatureRepository {
                 (:viewCount, :likeCount, :dislikeCount, :commentCount, :content, :createdAt)
             """;
 
-        return jdbi.withHandle(handle ->
+        long id = jdbi.withHandle(handle ->
                 handle.createUpdate(sql)
                         .bind("viewCount", postFeature.viewCount())
                         .bind("likeCount", postFeature.likeCount())
@@ -31,16 +31,16 @@ public class JdbiPostFeatureRepository implements PostFeatureRepository {
                         .bind("content", postFeature.content())
                         .bind("createdAt", postFeature.createdAt())
                         .executeAndReturnGeneratedKeys("id")
-                        .map((rs, ctx) -> new PostFeature(
-                                rs.getLong("id"),
-                                postFeature.viewCount(),
-                                postFeature.likeCount(),
-                                postFeature.dislikeCount(),
-                                postFeature.commentCount(),
-                                postFeature.content(),
-                                postFeature.createdAt()
-                        ))
-                        .one()
+                        .mapTo(Long.class)
+                        .one());
+        return new PostFeature(
+                id,
+                postFeature.viewCount(),
+                postFeature.likeCount(),
+                postFeature.dislikeCount(),
+                postFeature.commentCount(),
+                postFeature.content(),
+                postFeature.createdAt()
         );
     }
 
