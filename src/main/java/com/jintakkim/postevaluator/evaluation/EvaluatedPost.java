@@ -1,4 +1,4 @@
-package com.jintakkim.postevaluator.evaluator;
+package com.jintakkim.postevaluator.evaluation;
 
 import com.jintakkim.postevaluator.core.PostFeature;
 

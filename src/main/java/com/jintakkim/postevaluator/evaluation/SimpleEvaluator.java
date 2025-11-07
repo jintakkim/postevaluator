@@ -1,7 +1,7 @@
-package com.jintakkim.postevaluator.evaluator;
+package com.jintakkim.postevaluator.evaluation;
 
 import com.jintakkim.postevaluator.core.RecommendAlgorithm;
-import com.jintakkim.postevaluator.evaluator.metric.AlgorithmMetric;
+import com.jintakkim.postevaluator.evaluation.metric.AlgorithmMetric;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
