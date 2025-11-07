@@ -32,7 +32,7 @@ public class DbConfig {
      */
     private static String createDbUrl() {
         String dir = System.getProperty(DIR);
-        return "jdbc:sqlite:" + Paths.get(dir + DB_FILE);
+        return "jdbc:sqlite:" + Paths.get(dir, DB_FILE);
     }
 
     private void initializeDatabaseSchema() {
