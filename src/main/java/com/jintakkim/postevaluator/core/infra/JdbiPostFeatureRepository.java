@@ -24,7 +24,12 @@ public class JdbiPostFeatureRepository implements PostFeatureRepository {
 
         return jdbi.withHandle(handle ->
                 handle.createUpdate(sql)
-                        .bindBean(postFeature)
+                        .bind("viewCount", postFeature.viewCount())
+                        .bind("likeCount", postFeature.likeCount())
+                        .bind("dislikeCount", postFeature.dislikeCount())
+                        .bind("commentCount", postFeature.commentCount())
+                        .bind("content", postFeature.content())
+                        .bind("createdAt", postFeature.createdAt())
                         .executeAndReturnGeneratedKeys("id")
                         .map((rs, ctx) -> new PostFeature(
                                 rs.getLong("id"),

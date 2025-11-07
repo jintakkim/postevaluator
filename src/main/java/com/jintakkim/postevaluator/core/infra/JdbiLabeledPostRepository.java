@@ -22,7 +22,10 @@ public class JdbiLabeledPostRepository implements LabeledPostRepository {
             """;
         return jdbi.withHandle(handle ->
                 handle.createUpdate(sql)
-                        .bindBean(post)
+                        .bind("featureId", post.featureId())
+                        .bind("score", post.score())
+                        .bind("reasoning", post.reasoning())
+                        .bind("model", post.model())
                         .executeAndReturnGeneratedKeys("id")
                         .map((rs, ctx) -> new LabeledPost(
                                 rs.getLong("id"),
