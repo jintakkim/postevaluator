@@ -16,7 +16,7 @@ public class LocalFilePostFeatureRepository implements PostFeatureRepository {
     @Override
     public PostFeature save(PostFeature postFeature) {
         String sql = """
-            INSERT INTO features
+            INSERT INTO post_feature
                 (view_count, like_count, dislike_count, comment_count, content, created_at)
             VALUES
                 (:viewCount, :likeCount, :dislikeCount, :commentCount, :content, :createdAt)
@@ -42,7 +42,7 @@ public class LocalFilePostFeatureRepository implements PostFeatureRepository {
     @Override
     public List<PostFeature> findByIdIn(Collection<Long> ids) {
         if(ids == null || ids.isEmpty()) return List.of();
-        String sql = "SELECT * FROM features WHERE id IN (<ids>)";
+        String sql = "SELECT * FROM post_feature WHERE id IN (<ids>)";
         return jdbi.withHandle(handle ->
                 handle.createQuery(sql)
                         .bindList("ids", ids)

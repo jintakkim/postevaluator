@@ -15,10 +15,10 @@ public class LocalFileLabeledPostRepository implements LabeledPostRepository {
     @Override
     public LabeledPost save(LabeledPost post) {
         String sql = """
-            INSERT INTO labels
-                (feature_id, score, reasoning, labeled_model)
+            INSERT INTO labeled_post
+                (feature_id, score, reasoning, model)
             VALUES
-                (:featureId, :score, :reasoning, :labeledModel)
+                (:featureId, :score, :reasoning, :model)
             """;
         return jdbi.withHandle(handle ->
                 handle.createUpdate(sql)
@@ -38,12 +38,12 @@ public class LocalFileLabeledPostRepository implements LabeledPostRepository {
     @Override
     public List<Long> findUnlabeledFeatureIds() {
         String sql = """
-            SELECT f.id
-            FROM features f
+            SELECT p.id
+            FROM post_feature p
             WHERE NOT EXISTS (
                 SELECT 1
-                FROM labels l
-                WHERE l.feature_id = f.id
+                FROM labeled_post l
+                WHERE l.feature_id = p.id
             )
             """;
 
@@ -56,7 +56,7 @@ public class LocalFileLabeledPostRepository implements LabeledPostRepository {
 
     @Override
     public List<LabeledPost> findAll() {
-        String sql = "SELECT * FROM labels";
+        String sql = "SELECT * FROM labeled_post";
         return jdbi.withHandle(handle ->
                 handle.createQuery(sql)
                         .mapTo(LabeledPost.class)
