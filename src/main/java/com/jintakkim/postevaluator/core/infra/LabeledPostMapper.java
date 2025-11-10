@@ -14,8 +14,7 @@ public class LabeledPostMapper implements RowMapper<LabeledPost> {
                 rs.getLong("id"),
                 rs.getLong("feature_id"),
                 rs.getDouble("score"),
-                rs.getString("reasoning"),
-                rs.getString("model")
+                rs.getString("reasoning")
         );
     }
 }

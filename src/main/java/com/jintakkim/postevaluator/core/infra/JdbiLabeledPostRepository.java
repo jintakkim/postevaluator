@@ -16,16 +16,15 @@ public class JdbiLabeledPostRepository implements LabeledPostRepository {
     public LabeledPost save(LabeledPost post) {
         String sql = """
             INSERT INTO labeled_post
-                (feature_id, score, reasoning, model)
+                (feature_id, score, reasoning)
             VALUES
-                (:featureId, :score, :reasoning, :model)
+                (:featureId, :score, :reasoning)
             """;
         long id = jdbi.withHandle(handle ->
                 handle.createUpdate(sql)
                         .bind("featureId", post.featureId())
                         .bind("score", post.score())
                         .bind("reasoning", post.reasoning())
-                        .bind("model", post.model())
                         .executeAndReturnGeneratedKeys("id")
                         .mapTo(Long.class)
                         .one()
@@ -34,8 +33,7 @@ public class JdbiLabeledPostRepository implements LabeledPostRepository {
                 id,
                 post.featureId(),
                 post.score(),
-                post.reasoning(),
-                post.model()
+                post.reasoning()
         );
     }
 
