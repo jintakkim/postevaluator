@@ -67,4 +67,13 @@ public class JdbiLabeledPostRepository implements LabeledPostRepository {
                         .list()
         );
     }
+
+    @Override
+    public void deleteAll() {
+        String sql = "DELETE FROM labeled_post";
+        jdbi.useHandle(handle ->
+                handle.createUpdate(sql)
+                        .execute()
+        );
+    }
 }

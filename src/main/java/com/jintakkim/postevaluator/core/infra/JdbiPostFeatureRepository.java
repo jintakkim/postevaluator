@@ -19,12 +19,12 @@ public class JdbiPostFeatureRepository implements PostFeatureRepository {
             INSERT INTO post_feature
                 (view_count, like_count, dislike_count, comment_count, content, created_at)
             VALUES
-                (:viewCount, :likeCount, :dislikeCount, :commentCount, :content, :createdAt)
+                (:viewCountConfig, :likeCount, :dislikeCount, :commentCount, :content, :createdAt)
             """;
 
         long id = jdbi.withHandle(handle ->
                 handle.createUpdate(sql)
-                        .bind("viewCount", postFeature.viewCount())
+                        .bind("viewCountConfig", postFeature.viewCount())
                         .bind("likeCount", postFeature.likeCount())
                         .bind("dislikeCount", postFeature.dislikeCount())
                         .bind("commentCount", postFeature.commentCount())
@@ -53,6 +53,15 @@ public class JdbiPostFeatureRepository implements PostFeatureRepository {
                         .bindList("ids", ids)
                         .mapTo(PostFeature.class)
                         .list()
+        );
+    }
+
+    @Override
+    public void deleteAll() {
+        String sql = "DELETE FROM post_feature";
+        jdbi.useHandle(handle ->
+                handle.createUpdate(sql)
+                        .execute()
         );
     }
 }
