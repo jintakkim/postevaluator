@@ -8,5 +8,6 @@ import java.util.List;
 public interface PostFeatureRepository {
     PostFeature save(PostFeature postFeature);
     List<PostFeature> findByIdIn(Collection<Long> ids);
+    int count();
     void deleteAll();
 }

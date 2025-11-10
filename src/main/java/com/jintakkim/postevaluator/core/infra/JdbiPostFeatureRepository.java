@@ -57,6 +57,17 @@ public class JdbiPostFeatureRepository implements PostFeatureRepository {
     }
 
     @Override
+    public int count() {
+        String sql = "SELECT COUNT(*) FROM post_feature";
+
+        return jdbi.withHandle(handle ->
+                handle.createQuery(sql)
+                        .mapTo(Integer.class)
+                        .one()
+        );
+    }
+
+    @Override
     public void deleteAll() {
         String sql = "DELETE FROM post_feature";
         jdbi.useHandle(handle ->
