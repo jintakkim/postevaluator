@@ -1,7 +1,8 @@
-package com.jintakkim.postevaluator.core.infra;
+package com.jintakkim.postevaluator.config;
 
 import com.jintakkim.postevaluator.core.LabeledPost;
 import com.jintakkim.postevaluator.core.PostFeature;
+import com.jintakkim.postevaluator.core.infra.*;
 import org.jdbi.v3.core.Jdbi;
 
 import java.io.*;
