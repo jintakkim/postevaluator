@@ -1,15 +1,16 @@
 package com.jintakkim.postevaluator.config.feature;
 
+import com.jintakkim.postevaluator.core.CriteriaProvider;
 import com.jintakkim.postevaluator.core.FeatureProperty;
 import com.jintakkim.postevaluator.core.FeaturePropertyProvider;
 import com.jintakkim.postevaluator.core.FeatureType;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class CreatedAtConfig implements FeaturePropertyProvider {
+public class CreatedAtConfig implements FeaturePropertyProvider, CriteriaProvider {
     private static final int DEFAULT_MAX_AGE = 30;
     private static final String DEFAULT_CRITERIA = """
-            생성일은 콘텐츠의 최신성을 나타내는 지표로,
+            콘텐츠의 최신성을 나타내는 지표로,
             오래될수록 부정적인 요소 작용한다
             """;
 
@@ -28,8 +29,9 @@ public class CreatedAtConfig implements FeaturePropertyProvider {
         return new CreatedAtConfig.Builder();
     }
 
+    @Override
     public String getCriteria() {
-        return criteria;
+        return "생성일: " + criteria;
     }
 
     @Override

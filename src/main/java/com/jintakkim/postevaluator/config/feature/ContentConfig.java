@@ -1,15 +1,16 @@
 package com.jintakkim.postevaluator.config.feature;
 
+import com.jintakkim.postevaluator.core.CriteriaProvider;
 import com.jintakkim.postevaluator.core.FeatureProperty;
 import com.jintakkim.postevaluator.core.FeaturePropertyProvider;
 import com.jintakkim.postevaluator.core.FeatureType;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class ContentConfig implements FeaturePropertyProvider {
+public class ContentConfig implements FeaturePropertyProvider, CriteriaProvider {
     private static final String DEFAULT_TOPIC = "자유 주제 형식";
     private static final String DEFAULT_CRITERIA = """
-            게시글은 사용자에게 좋은 글의 가치를 제공해야 한다
+            사용자에게 좋은 글의 가치를 제공해야 한다
             적절한 길이는 정보의 깊이와 가독성을 모두 반영하는 품질 판단의 요소이다
             """;
     private static final int DEFAULT_MIN_CONTENT_SIZE = 0;
@@ -30,8 +31,9 @@ public class ContentConfig implements FeaturePropertyProvider {
         return new Builder();
     }
 
+    @Override
     public String getCriteria() {
-        return criteria;
+        return "게시글: " + criteria;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.jintakkim.postevaluator.config.feature;
 
+import com.jintakkim.postevaluator.core.CriteriaProvider;
 import com.jintakkim.postevaluator.core.FeatureProperty;
 import com.jintakkim.postevaluator.core.FeaturePropertyProvider;
 import com.jintakkim.postevaluator.core.FeatureType;
@@ -8,11 +9,11 @@ import com.jintakkim.postevaluator.core.distribution.LogNormalDistribution;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class LikeCountConfig implements FeaturePropertyProvider {
+public class LikeCountConfig implements FeaturePropertyProvider, CriteriaProvider {
     private static final long DEFAULT_MEDIAN = 100L;
     private static final double DEFAULT_HEURISTIC_FACTOR = 0.5;
     private static final String DEFAULT_CRITERIA = """
-            좋아요수는 사용자의 관심도와 콘텐츠의 인기를 나타내는 지표
+            사용자의 관심도와 콘텐츠의 인기를 나타내는 지표
             """;
 
     private final Distribution distribution;
@@ -30,8 +31,9 @@ public class LikeCountConfig implements FeaturePropertyProvider {
         return new LikeCountConfig.Builder();
     }
 
+    @Override
     public String getCriteria() {
-        return criteria;
+        return "좋아요수: " + criteria;
     }
 
     @Override

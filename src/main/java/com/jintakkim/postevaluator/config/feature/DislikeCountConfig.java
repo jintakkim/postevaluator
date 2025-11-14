@@ -1,5 +1,6 @@
 package com.jintakkim.postevaluator.config.feature;
 
+import com.jintakkim.postevaluator.core.CriteriaProvider;
 import com.jintakkim.postevaluator.core.FeatureProperty;
 import com.jintakkim.postevaluator.core.FeaturePropertyProvider;
 import com.jintakkim.postevaluator.core.FeatureType;
@@ -8,11 +9,11 @@ import com.jintakkim.postevaluator.core.distribution.LogNormalDistribution;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class DislikeCountConfig implements FeaturePropertyProvider {
+public class DislikeCountConfig implements FeaturePropertyProvider, CriteriaProvider {
     private static final long DEFAULT_MEDIAN = 10L;
     private static final double DEFAULT_HEURISTIC_FACTOR = 0.5;
     private static final String DEFAULT_CRITERIA = """
-            싫어요 수는 콘텐츠에 대한 사용자의 부정적인 반응이나 불만족을 나타내는 지표.
+            콘텐츠에 대한 사용자의 부정적인 반응이나 불만족을 나타내는 지표.
             """;
 
     private final Distribution distribution;
@@ -30,8 +31,9 @@ public class DislikeCountConfig implements FeaturePropertyProvider {
         return new DislikeCountConfig.Builder();
     }
 
+    @Override
     public String getCriteria() {
-        return criteria;
+        return "싫어요수: " + criteria;
     }
 
     @Override

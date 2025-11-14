@@ -48,6 +48,16 @@ public class FeatureConfig {
         properties.add(createdAtConfig.getFeatureProperty());
         return properties;
     }
+    public List<String> getCriteria() {
+        List<String> criteria = new ArrayList<>();
+        criteria.add(viewCountConfig.getCriteria());
+        criteria.add(likeCountConfig.getCriteria());
+        criteria.add(dislikeCountConfig.getCriteria());
+        criteria.add(commentCountConfig.getCriteria());
+        criteria.add(contentConfig.getCriteria());
+        criteria.add(createdAtConfig.getCriteria());
+        return criteria;
+    }
 
     public static class Builder {
         private ViewCountConfig viewCountConfig;

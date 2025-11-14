@@ -1,5 +1,6 @@
 package com.jintakkim.postevaluator.config.feature;
 
+import com.jintakkim.postevaluator.core.CriteriaProvider;
 import com.jintakkim.postevaluator.core.FeatureProperty;
 import com.jintakkim.postevaluator.core.FeaturePropertyProvider;
 import com.jintakkim.postevaluator.core.FeatureType;
@@ -8,11 +9,11 @@ import com.jintakkim.postevaluator.core.distribution.LogNormalDistribution;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class CommentCountConfig implements FeaturePropertyProvider {
+public class CommentCountConfig implements FeaturePropertyProvider, CriteriaProvider {
     private static final long DEFAULT_MEDIAN = 10L;
     private static final double DEFAULT_HEURISTIC_FACTOR = 0.5;
     private static final String DEFAULT_CRITERIA = """
-            댓글 수는 사용자의 관심도와 콘텐츠에 대한 참여도를 나타내는 지표.
+            사용자의 관심도와 콘텐츠에 대한 참여도를 나타내는 지표.
             """;
 
     private final Distribution distribution;
@@ -30,8 +31,9 @@ public class CommentCountConfig implements FeaturePropertyProvider {
         return new CommentCountConfig.Builder();
     }
 
+    @Override
     public String getCriteria() {
-        return criteria;
+        return "댓글수: " + criteria;
     }
 
     @Override
