@@ -21,11 +21,12 @@ public class GeminiFeatureGenerator implements FeatureGenerator {
 
     public GeminiFeatureGenerator(
             Client client,
-            GenerateContentConfig generateContentConfig
+            GenerateContentConfig generateContentConfig,
+            ObjectMapper objectMapper
             ) {
         this.client = client;
         this.generateContentConfig = generateContentConfig;
-        this.objectMapper = new ObjectMapper();
+        this.objectMapper = objectMapper;
     }
 
     @Override
