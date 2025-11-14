@@ -1,8 +1,5 @@
 package com.jintakkim.postevaluator.core;
 
-import java.time.OffsetDateTime;
-import java.time.format.DateTimeParseException;
-
 public record LabeledPost(
         Long id,
         long featureId,

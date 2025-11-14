@@ -1,6 +1,5 @@
 package com.jintakkim.postevaluator.config.feature;
 
-import com.jintakkim.postevaluator.client.RecommendTest;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
