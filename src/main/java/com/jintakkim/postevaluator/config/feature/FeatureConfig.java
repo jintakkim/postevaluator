@@ -1,6 +1,13 @@
 package com.jintakkim.postevaluator.config.feature;
 
+import com.jintakkim.postevaluator.core.FeatureProperty;
+import com.jintakkim.postevaluator.core.FeaturePropertyProvider;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 public class FeatureConfig {
@@ -29,6 +36,17 @@ public class FeatureConfig {
 
     public static Builder builder() {
         return new Builder();
+    }
+
+    public List<FeatureProperty> getFeatureProperties() {
+        List<FeatureProperty> properties = new ArrayList<>();
+        properties.add(viewCountConfig.getFeatureProperty());
+        properties.add(likeCountConfig.getFeatureProperty());
+        properties.add(dislikeCountConfig.getFeatureProperty());
+        properties.add(commentCountConfig.getFeatureProperty());
+        properties.add(contentConfig.getFeatureProperty());
+        properties.add(createdAtConfig.getFeatureProperty());
+        return properties;
     }
 
     public static class Builder {

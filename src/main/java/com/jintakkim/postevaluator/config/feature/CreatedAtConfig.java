@@ -1,11 +1,12 @@
 package com.jintakkim.postevaluator.config.feature;
 
+import com.jintakkim.postevaluator.core.FeatureProperty;
+import com.jintakkim.postevaluator.core.FeaturePropertyProvider;
+import com.jintakkim.postevaluator.core.FeatureType;
 import lombok.extern.slf4j.Slf4j;
 
-import java.time.LocalDateTime;
-
 @Slf4j
-public class CreatedAtConfig {
+public class CreatedAtConfig implements FeaturePropertyProvider {
     private static final int DEFAULT_MAX_AGE = 30;
     private static final String DEFAULT_CRITERIA = """
             생성일은 콘텐츠의 최신성을 나타내는 지표로,
@@ -27,12 +28,28 @@ public class CreatedAtConfig {
         return new CreatedAtConfig.Builder();
     }
 
-    public String getFeatureDescription() {
-        return String.format("ISO-8601형식를 따르는 생성시간이다, 가장 오래된 생성일은 %d이다", maxAge);
-    }
-
     public String getCriteria() {
         return criteria;
+    }
+
+    @Override
+    public FeatureProperty getFeatureProperty() {
+        return new FeatureProperty() {
+            @Override
+            public String getName() {
+                return "createdAt";
+            }
+
+            @Override
+            public String getFeatureDescription() {
+                return String.format("ISO-8601형식를 따르는 생성시간이다, 가장 오래된 생성일은 %d이다", maxAge);
+            }
+
+            @Override
+            public FeatureType getFeatureType() {
+                return FeatureType.STRING;
+            }
+        };
     }
 
     public static class Builder {

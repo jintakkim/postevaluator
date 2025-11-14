@@ -1,11 +1,14 @@
 package com.jintakkim.postevaluator.config.feature;
 
+import com.jintakkim.postevaluator.core.FeatureProperty;
+import com.jintakkim.postevaluator.core.FeaturePropertyProvider;
+import com.jintakkim.postevaluator.core.FeatureType;
 import com.jintakkim.postevaluator.core.distribution.Distribution;
 import com.jintakkim.postevaluator.core.distribution.LogNormalDistribution;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class DislikeCountConfig {
+public class DislikeCountConfig implements FeaturePropertyProvider {
     private static final long DEFAULT_MEDIAN = 10L;
     private static final double DEFAULT_HEURISTIC_FACTOR = 0.5;
     private static final String DEFAULT_CRITERIA = """
@@ -27,12 +30,28 @@ public class DislikeCountConfig {
         return new DislikeCountConfig.Builder();
     }
 
-    public String getFeatureDescription() {
-        return String.format("싫어요 수이다, 통계적 특성: %s", distribution.getDescription());
-    }
-
     public String getCriteria() {
         return criteria;
+    }
+
+    @Override
+    public FeatureProperty getFeatureProperty() {
+        return new FeatureProperty() {
+            @Override
+            public String getName() {
+                return "dislikeCount";
+            }
+
+            @Override
+            public String getFeatureDescription() {
+                return String.format("싫어요 수이다, 통계적 특성: %s", distribution.getDescription());
+            }
+
+            @Override
+            public FeatureType getFeatureType() {
+                return FeatureType.INTEGER;
+            }
+        };
     }
 
     public static class Builder {

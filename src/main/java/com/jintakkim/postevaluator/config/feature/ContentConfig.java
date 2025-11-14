@@ -1,9 +1,12 @@
 package com.jintakkim.postevaluator.config.feature;
 
+import com.jintakkim.postevaluator.core.FeatureProperty;
+import com.jintakkim.postevaluator.core.FeaturePropertyProvider;
+import com.jintakkim.postevaluator.core.FeatureType;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class ContentConfig {
+public class ContentConfig implements FeaturePropertyProvider {
     private static final String DEFAULT_TOPIC = "자유 주제 형식";
     private static final String DEFAULT_CRITERIA = """
             게시글은 사용자에게 좋은 글의 가치를 제공해야 한다
@@ -27,12 +30,28 @@ public class ContentConfig {
         return new Builder();
     }
 
-    public String getFeatureDescription() {
-        return String.format("내용이다, %d자 ~ %d자 사이의 글이며 주제는 %s이다, 다양한 퀄리티의 글이 존재한다.", maxContentSize, minContentSize, topic);
-    }
-
     public String getCriteria() {
         return criteria;
+    }
+
+    @Override
+    public FeatureProperty getFeatureProperty() {
+        return new FeatureProperty() {
+            @Override
+            public String getName() {
+                return "content";
+            }
+
+            @Override
+            public String getFeatureDescription() {
+                return String.format("내용이다, %d자 ~ %d자 사이의 글이며 주제는 %s이다, 다양한 퀄리티의 글이 존재한다.", maxContentSize, minContentSize, topic);
+            }
+
+            @Override
+            public FeatureType getFeatureType() {
+                return FeatureType.STRING;
+            }
+        };
     }
 
     public static class Builder {
