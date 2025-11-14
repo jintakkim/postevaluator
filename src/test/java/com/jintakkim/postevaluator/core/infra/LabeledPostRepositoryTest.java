@@ -7,6 +7,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 
 public class LabeledPostRepositoryTest extends LocalFileDbIntegrationTest {
@@ -42,11 +44,11 @@ public class LabeledPostRepositoryTest extends LocalFileDbIntegrationTest {
                 0L,
                 0L,
                 "content",
-                LocalDateTime.of(2025, 11, 7, 0,0).toString()
+                OffsetDateTime.of(LocalDateTime.of(2025, 11, 7, 0, 0), ZoneOffset.UTC).toString()
         );
     }
 
     private LabeledPost createLabeledPost(Long featureId) {
-        return new LabeledPost(featureId, 1.0, "good", "manuel");
+        return new LabeledPost(featureId, 1.0, "good");
     }
 }

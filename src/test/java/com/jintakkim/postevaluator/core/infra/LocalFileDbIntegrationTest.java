@@ -1,5 +1,6 @@
 package com.jintakkim.postevaluator.core.infra;
 
+import com.jintakkim.postevaluator.config.DbConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Jdbi;
 import org.junit.jupiter.api.*;
