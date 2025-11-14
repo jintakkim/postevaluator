@@ -1,5 +1,6 @@
 package com.jintakkim.postevaluator.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.genai.types.GenerateContentConfig;
 import com.google.genai.types.Schema;
 import com.google.genai.types.Type;
@@ -11,18 +12,19 @@ import java.util.List;
 import java.util.Map;
 
 public class GeneratorConfig {
-    public final FeatureGenerator featureGenerator;
     private final FeatureConfig featureConfig;
     private final GeminiConfig geminiConfig;
 
+    public final FeatureGenerator featureGenerator;
 
     public GeneratorConfig(
             FeatureConfig featureConfig,
-            GeminiConfig geminiConfig
+            GeminiConfig geminiConfig,
+            ObjectMapper objectMapper
     ) {
         this.featureConfig = featureConfig;
         this.geminiConfig = geminiConfig;
-        featureGenerator = new GeminiFeatureGenerator(geminiConfig.client, buildGenerateContentConfig());
+        featureGenerator = new GeminiFeatureGenerator(geminiConfig.client, buildGenerateContentConfig(), objectMapper);
     }
 
     private GenerateContentConfig buildGenerateContentConfig() {
