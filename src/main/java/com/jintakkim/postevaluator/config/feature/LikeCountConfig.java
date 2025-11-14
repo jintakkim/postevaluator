@@ -62,6 +62,7 @@ public class LikeCountConfig {
             }
             if(std == null) {
                 log.warn("좋아요수 표준편차가 설정되지 않아 {}으로 설정합니다", DEFAULT_HEURISTIC_FACTOR * median);
+                std = DEFAULT_HEURISTIC_FACTOR * median;
             }
             if(criteria == null) {
                 criteria = DEFAULT_CRITERIA;

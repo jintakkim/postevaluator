@@ -62,6 +62,7 @@ public class CommentCountConfig {
             }
             if(std == null) {
                 log.warn("댓글 수 표준편차가 설정되지 않아 {}으로 설정합니다", DEFAULT_HEURISTIC_FACTOR * median);
+                std = DEFAULT_HEURISTIC_FACTOR * median;
             }
             if(criteria == null) {
                 criteria = DEFAULT_CRITERIA;
