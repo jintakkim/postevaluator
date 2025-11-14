@@ -13,7 +13,6 @@ CREATE TABLE IF NOT EXISTS labeled_post (
     feature_id    INTEGER NOT NULL,
     score         REAL NOT NULL,
     reasoning     TEXT NOT NULL,
-    model         TEXT NOT NULL,
 
     FOREIGN KEY(feature_id) REFERENCES post_feature(id)
 );
