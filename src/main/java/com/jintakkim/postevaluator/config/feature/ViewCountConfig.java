@@ -1,5 +1,9 @@
 package com.jintakkim.postevaluator.config.feature;
 
+import com.jintakkim.postevaluator.core.CriteriaProvider;
+import com.jintakkim.postevaluator.core.FeatureProperty;
+import com.jintakkim.postevaluator.core.FeaturePropertyProvider;
+import com.jintakkim.postevaluator.core.FeatureType;
 import com.jintakkim.postevaluator.core.distribution.Distribution;
 import com.jintakkim.postevaluator.core.distribution.LogNormalDistribution;
 
@@ -7,14 +11,14 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * 조회수 관련 설정 객체
- * 조회수는 로그 정규 분포를 따른다.
+ * 조회수는 로그 정규 분포를 따른다고 가정.
  */
 @Slf4j
-public class ViewCountConfig {
+public class ViewCountConfig implements FeaturePropertyProvider, CriteriaProvider {
     private static final long DEFAULT_MEDIAN = 10000L;
     private static final double DEFAULT_HEURISTIC_FACTOR = 0.5;
     private static final String DEFAULT_CRITERIA = """
-            조회수는 사용자의 관심도와 콘텐츠의 인기를 나타내는 지표.
+            사용자의 관심도와 콘텐츠의 인기를 나타내는 지표.
             """;
 
     private final Distribution distribution;
@@ -32,12 +36,29 @@ public class ViewCountConfig {
         return new Builder();
     }
 
-    public String getFeatureDescription() {
-        return String.format("조회수이다, 통계적 특성: %s", distribution.getDescription());
+    @Override
+    public String getCriteria() {
+        return "조회수" + criteria;
     }
 
-    public String getCriteria() {
-        return criteria;
+    @Override
+    public FeatureProperty getFeatureProperty() {
+        return new FeatureProperty() {
+            @Override
+            public String getName() {
+                return "viewCount";
+            }
+
+            @Override
+            public String getFeatureDescription() {
+                return String.format("조회수이다, 통계적 특성: %s", distribution.getDescription());
+            }
+
+            @Override
+            public FeatureType getFeatureType() {
+                return FeatureType.INTEGER;
+            }
+        };
     }
 
     public static class Builder {
