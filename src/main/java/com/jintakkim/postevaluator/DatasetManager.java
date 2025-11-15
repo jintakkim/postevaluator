@@ -1,15 +1,21 @@
 package com.jintakkim.postevaluator;
 
+import com.jintakkim.postevaluator.core.LabeledPost;
 import com.jintakkim.postevaluator.core.PostFeature;
 import com.jintakkim.postevaluator.core.SetupStrategy;
 import com.jintakkim.postevaluator.core.infra.LabeledPostRepository;
 import com.jintakkim.postevaluator.core.infra.PostFeatureRepository;
+import com.jintakkim.postevaluator.evaluation.EvaluationPost;
 import com.jintakkim.postevaluator.generation.FeatureGenerator;
 import com.jintakkim.postevaluator.labeling.Labeler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -65,11 +71,33 @@ public class DatasetManager {
         featureGenerator.generate(count).forEach(postFeatureRepository::save);
     }
 
-
     private void doLabeling() {
         List<Long> unlabeledFeatureIds = labeledPostRepository.findUnlabeledFeatureIds();
         log.info("레이블링되지 않은 {}개의 데이터를 레이블링 합니다.", unlabeledFeatureIds.size());
         List<PostFeature> postFeatures = postFeatureRepository.findByIdIn(unlabeledFeatureIds);
         labeler.label(postFeatures).forEach(labeledPostRepository::save);
+    }
+
+    public List<EvaluationPost> getEvaluationPosts() {
+        List<LabeledPost> labeledPosts = getLabeledPostsToEvaluate();
+        Map<Long, PostFeature> postFeatures = postFeatureRepository.findByIdIn(extractFeatureIds(labeledPosts)).stream()
+                .collect(Collectors.toMap(PostFeature::id, Function.identity()));
+        return labeledPosts.stream()
+                .map(labeledPost -> new EvaluationPost(
+                        postFeatures.get(labeledPost.featureId()),
+                        labeledPost.score(),
+                        labeledPost.reasoning()
+                        )
+                ).toList();
+    }
+
+    private List<LabeledPost> getLabeledPostsToEvaluate() {
+        if(labeledPostRepository.count() > targetDatasetSize)
+            return labeledPostRepository.findRandomly(targetDatasetSize);
+        return labeledPostRepository.findAll();
+    }
+
+    private List<Long> extractFeatureIds(List<LabeledPost> labeledPosts) {
+        return labeledPosts.stream().map(LabeledPost::featureId).toList();
     }
 }
