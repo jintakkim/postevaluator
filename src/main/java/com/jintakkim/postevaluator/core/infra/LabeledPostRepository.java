@@ -8,5 +8,7 @@ public interface LabeledPostRepository {
     LabeledPost save(LabeledPost post);
     List<Long> findUnlabeledFeatureIds();
     List<LabeledPost> findAll();
+    List<LabeledPost> findRandomly(int count);
     void deleteAll();
+    int count();
 }

@@ -67,11 +67,38 @@ public class JdbiLabeledPostRepository implements LabeledPostRepository {
     }
 
     @Override
+    public List<LabeledPost> findRandomly(int count) {
+        String sql = """
+                    SELECT id, post_feature_id, score, created_at
+                    FROM labeled_post
+                    ORDER BY RANDOM()
+                    LIMIT :count
+                    """;
+        return jdbi.withHandle(handle ->
+                handle.createQuery(sql)
+                        .bind("count", count)
+                        .mapTo(LabeledPost.class)
+                        .list()
+        );
+    }
+
+    @Override
     public void deleteAll() {
         String sql = "DELETE FROM labeled_post";
         jdbi.useHandle(handle ->
                 handle.createUpdate(sql)
                         .execute()
+        );
+    }
+
+    @Override
+    public int count() {
+        String sql = "SELECT COUNT(*) FROM labeled_post";
+
+        return jdbi.withHandle(handle ->
+                handle.createQuery(sql)
+                        .mapTo(Integer.class)
+                        .one()
         );
     }
 }
