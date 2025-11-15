@@ -7,6 +7,7 @@ import com.jintakkim.postevaluator.core.PostFeature;
  */
 public record EvaluationPost(
         PostFeature feature,
-        double score
+        double score,
+        String reasoning
 ) {
 }
