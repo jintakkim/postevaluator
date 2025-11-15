@@ -31,6 +31,7 @@ public class AlgorithmMetricConfig {
                 log.info("평가 지표 설정을 하지 않았습니다, 기본값: {}으로 설정합니다", DEFAULT_METRIC.getName());
                 this.algorithmMetric = DEFAULT_METRIC;
             }
+            
             return new AlgorithmMetricConfig(algorithmMetric);
         }
     }

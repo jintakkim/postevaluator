@@ -1,30 +1,57 @@
 package com.jintakkim.postevaluator.evaluation.metric;
 
-import lombok.RequiredArgsConstructor;
-
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
-@RequiredArgsConstructor
 public class MSEMetric implements AlgorithmMetric {
+    private static final int DEFAULT_TOP_ERROR_COUNT = 0;
+    private final int topErrorCount;
+
+    public MSEMetric(int topErrorCount) {
+        this.topErrorCount = topErrorCount;
+    }
+
+    public MSEMetric() {
+        this(DEFAULT_TOP_ERROR_COUNT);
+    }
+
     @Override
     public String getName() {
         return "MSE";
     }
 
     @Override
-    public double calculateCost(List<Double> score, List<Double> scorePredict) {
+    public MetricResult calculateCost(List<Double> score, List<Double> scorePredict) {
         validateInput(score, scorePredict);
-        if(score.isEmpty()) return 0;
+        if(score.isEmpty()) return new MetricResult(List.of(), 0.0);
         double sumSquaredError = 0.0;
-        for (int i = 0; i < score.size(); i++) {
+        int scoreSize = score.size();
+        List<ErrorRecord> errorRecords = new ArrayList<>(scoreSize);
+
+        for (int i = 0; i < scoreSize; i++) {
             double error = score.get(i) - scorePredict.get(i);
-            sumSquaredError += (error * error);
+            double squaredError = error * error;
+            errorRecords.add(new ErrorRecord(squaredError, i));
+            sumSquaredError += squaredError;
         }
-        return sumSquaredError / score.size();
+        double cost = sumSquaredError / scoreSize ;
+        List<Integer> highCostIndices = calHighCostIndexes(errorRecords);
+        return new MetricResult(highCostIndices, cost);
     }
 
     private void validateInput(List<Double> score, List<Double> scorePredict) {
         if (scorePredict == null || score == null || score.size() != scorePredict.size())
             throw new IllegalArgumentException("score과 scorePredict 리스트는 null이 아니어야 하며, 크기가 같아야 합니다.");
     }
+
+    private List<Integer> calHighCostIndexes(List<ErrorRecord> errorRecords) {
+        return errorRecords.stream()
+                .sorted(Comparator.comparingDouble(ErrorRecord::squaredError).reversed())
+                .limit(topErrorCount)
+                .map(ErrorRecord::originalIndex)
+                .toList();
+    }
+
+    private record ErrorRecord(double squaredError, int originalIndex) {}
 }

@@ -14,5 +14,5 @@ public interface AlgorithmMetric {
      * @param scorePredict 알고리즘으로 부터 예측된 스코어, 스코어와 리스트 내에서의 인덱스가 일치해야한다.
      * @return 비용
      */
-    double calculateCost(List<Double> score, List<Double> scorePredict);
+    MetricResult calculateCost(List<Double> score, List<Double> scorePredict);
 }
