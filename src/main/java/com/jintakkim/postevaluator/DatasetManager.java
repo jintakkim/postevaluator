@@ -1,0 +1,75 @@
+package com.jintakkim.postevaluator;
+
+import com.jintakkim.postevaluator.core.PostFeature;
+import com.jintakkim.postevaluator.core.SetupStrategy;
+import com.jintakkim.postevaluator.core.infra.LabeledPostRepository;
+import com.jintakkim.postevaluator.core.infra.PostFeatureRepository;
+import com.jintakkim.postevaluator.generation.FeatureGenerator;
+import com.jintakkim.postevaluator.labeling.Labeler;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.List;
+
+@Slf4j
+@RequiredArgsConstructor
+public class DatasetManager {
+    private final int targetDatasetSize;
+    private final SetupStrategy setupStrategy;
+    private final PostFeatureRepository postFeatureRepository;
+    private final LabeledPostRepository labeledPostRepository;
+    private final FeatureGenerator featureGenerator;
+    private final Labeler labeler;
+
+    public void initializeDataset() {
+        switch (setupStrategy) {
+            case CLEAR:
+                handleClearStrategy();
+                break;
+            case REUSE_STRICT:
+                handleReuseStrictStrategy();
+                break;
+            case REUSE_RANDOM:
+                handleReuseRandomStrategy();
+                break;
+        }
+    }
+
+    private void handleClearStrategy() {
+        postFeatureRepository.deleteAll();
+        labeledPostRepository.deleteAll();
+        generateAndSaveFeatures(targetDatasetSize);
+        doLabeling();
+    }
+
+    private void handleReuseStrictStrategy() {
+        int currentCount = postFeatureRepository.count();
+        int countToMake = targetDatasetSize - currentCount;
+        if (countToMake < 0) {
+            throw new IllegalStateException("기존 데이터가 필요한 데이터보다 많습니다. SetupStrategy을 CLEAR 혹은 REUSE_RANDOM으로 변경하세요.");
+        }
+        generateAndSaveFeatures(countToMake);
+        doLabeling();
+    }
+
+    private void handleReuseRandomStrategy() {
+        int currentCount = postFeatureRepository.count();
+        int countToMake = targetDatasetSize - currentCount;
+        generateAndSaveFeatures(countToMake);
+        doLabeling();
+    }
+
+    private void generateAndSaveFeatures(int count) {
+        if (count <= 0) return;
+        log.info("{}개의 데이터를 {} 모델을 통해 생성합니다.", count, featureGenerator.getModelName());
+        featureGenerator.generate(count).forEach(postFeatureRepository::save);
+    }
+
+
+    private void doLabeling() {
+        List<Long> unlabeledFeatureIds = labeledPostRepository.findUnlabeledFeatureIds();
+        log.info("레이블링되지 않은 {}개의 데이터를 레이블링 합니다.", unlabeledFeatureIds.size());
+        List<PostFeature> postFeatures = postFeatureRepository.findByIdIn(unlabeledFeatureIds);
+        labeler.label(postFeatures).forEach(labeledPostRepository::save);
+    }
+}
