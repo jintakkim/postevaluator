@@ -8,19 +8,19 @@ import java.util.List;
 
 @RequiredArgsConstructor
 public class SimpleEvaluator implements Evaluator {
-    private final List<EvaluatedPost> evaluatedPosts;
+    private final List<EvaluationPost> evaluationPosts;
     private final AlgorithmMetric algorithmMetric;
 
     @Override
     public EvaluateResult evaluate(RecommendAlgorithm recommendAlgorithm) {
-        List<Double> score = evaluatedPosts.stream().map(EvaluatedPost::score).toList();
+        List<Double> score = evaluationPosts.stream().map(EvaluationPost::score).toList();
         List<Double> predScore = predictScore(recommendAlgorithm);
         double cost = algorithmMetric.calculateCost(score, predScore);
         return new EvaluateResult(algorithmMetric, cost);
     }
 
     private List<Double> predictScore(RecommendAlgorithm recommendAlgorithm) {
-        return evaluatedPosts.stream()
+        return evaluationPosts.stream()
                 .map(post -> recommendAlgorithm.calculateScore(post.feature()))
                 .toList();
     }
