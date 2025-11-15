@@ -14,6 +14,7 @@ public class MSEMetric implements AlgorithmMetric {
     @Override
     public double calculateCost(List<Double> score, List<Double> scorePredict) {
         validateInput(score, scorePredict);
+        if(score.isEmpty()) return 0;
         double sumSquaredError = 0.0;
         for (int i = 0; i < score.size(); i++) {
             double error = score.get(i) - scorePredict.get(i);
