@@ -36,13 +36,10 @@ public class DbConfig {
         jdbi.registerRowMapper(LabeledPost.class, new LabeledPostMapper());
     }
 
-    /**
-     * todo: 커스텀 환경 변수로으로 저장 디렉토리 위치 받을 수 있게 변경
-     */
     private static String createDbUrl(String fileName) {
         if(fileName == null || !fileName.endsWith(".db"))
             throw new IllegalArgumentException("파일 명은 .db로 끝나야 합니다.");
         String dir = System.getProperty(DIR);
-        return "jdbc:sqlite:" + Paths.get(dir, DEFAULT_FILE_NAME);
+        return "jdbc:sqlite:" + Paths.get(dir, fileName);
     }
 }
