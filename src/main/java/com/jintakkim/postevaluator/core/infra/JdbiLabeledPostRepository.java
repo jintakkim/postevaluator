@@ -16,13 +16,13 @@ public class JdbiLabeledPostRepository implements LabeledPostRepository {
     public LabeledPost save(LabeledPost post) {
         String sql = """
             INSERT INTO labeled_post
-                (feature_id, score, reasoning)
+                (post_id, score, reasoning)
             VALUES
-                (:featureId, :score, :reasoning)
+                (:postId, :score, :reasoning)
             """;
         long id = jdbi.withHandle(handle ->
                 handle.createUpdate(sql)
-                        .bind("featureId", post.featureId())
+                        .bind("postId", post.postId())
                         .bind("score", post.score())
                         .bind("reasoning", post.reasoning())
                         .executeAndReturnGeneratedKeys("id")
@@ -31,21 +31,21 @@ public class JdbiLabeledPostRepository implements LabeledPostRepository {
         );
         return new LabeledPost(
                 id,
-                post.featureId(),
+                post.postId(),
                 post.score(),
                 post.reasoning()
         );
     }
 
     @Override
-    public List<Long> findUnlabeledFeatureIds() {
+    public List<Long> findUnlabeledPostIds() {
         String sql = """
             SELECT p.id
-            FROM post_feature p
+            FROM post p
             WHERE NOT EXISTS (
                 SELECT 1
                 FROM labeled_post l
-                WHERE l.feature_id = p.id
+                WHERE l.post_id = p.id
             )
             """;
 
@@ -69,7 +69,7 @@ public class JdbiLabeledPostRepository implements LabeledPostRepository {
     @Override
     public List<LabeledPost> findRandomly(int count) {
         String sql = """
-                    SELECT id, post_feature_id, score, created_at
+                    SELECT id, post_id, score, created_at
                     FROM labeled_post
                     ORDER BY RANDOM()
                     LIMIT :count

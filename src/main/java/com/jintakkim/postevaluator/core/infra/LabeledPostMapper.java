@@ -12,7 +12,7 @@ public class LabeledPostMapper implements RowMapper<LabeledPost> {
     public LabeledPost map(ResultSet rs, StatementContext ctx) throws SQLException {
         return new LabeledPost(
                 rs.getLong("id"),
-                rs.getLong("feature_id"),
+                rs.getLong("post_id"),
                 rs.getDouble("score"),
                 rs.getString("reasoning")
         );

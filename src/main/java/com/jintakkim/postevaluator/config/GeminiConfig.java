@@ -16,6 +16,7 @@ public class GeminiConfig {
             case INTEGER -> Type.Known.INTEGER;
             case STRING -> Type.Known.STRING;
             case DOUBLE -> Type.Known.NUMBER;
+            case DATE -> Type.Known.STRING;
         };
     }
 }

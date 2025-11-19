@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface LabeledPostRepository {
     LabeledPost save(LabeledPost post);
-    List<Long> findUnlabeledFeatureIds();
+    List<Long> findUnlabeledPostIds();
     List<LabeledPost> findAll();
     List<LabeledPost> findRandomly(int count);
     void deleteAll();

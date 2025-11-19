@@ -7,10 +7,13 @@ import com.google.genai.Client;
 import com.google.genai.types.GenerateContentConfig;
 import com.google.genai.types.GenerateContentResponse;
 import com.jintakkim.postevaluator.core.LabeledPost;
-import com.jintakkim.postevaluator.core.PostFeature;
+import com.jintakkim.postevaluator.core.Post;
+import com.jintakkim.postevaluator.feature.Feature;
+import com.jintakkim.postevaluator.feature.FeatureProvider;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class GeminiLabeler implements Labeler {
     private static final String MODEL_NAME = "gemini-2.0-flash";
@@ -26,35 +29,40 @@ public class GeminiLabeler implements Labeler {
             출력은 스키마를 따른다
             """;
 
-    private final String ratingCriteria;
+    private final FeatureProvider featureProvider;
     private final Client client;
     private final GenerateContentConfig generateContentConfig;
     private final ObjectMapper objectMapper;
 
     public GeminiLabeler(
-            String ratingCriteria,
+            FeatureProvider featureProvider,
             Client client,
             GenerateContentConfig generateContentConfig,
             ObjectMapper objectMapper
     ) {
-        this.ratingCriteria = ratingCriteria;
+        this.featureProvider = featureProvider;
         this.client = client;
         this.generateContentConfig = generateContentConfig;
         this.objectMapper = objectMapper;
     }
 
     @Override
-    public List<LabeledPost> label(List<PostFeature> unlabeledFeatures) {
-        List<PostFeaturePrompt> dataPrompt = unlabeledFeatures.stream().map(PostFeaturePrompt::new).toList();
-        String stringifiedDataPrompt = convertToString(dataPrompt);
+    public List<LabeledPost> label(List<Post> unlabeledPosts) {
+        String stringifiedDataPrompt = convertToString(unlabeledPosts);
         GenerateContentResponse response = client.models.generateContent(
                 MODEL_NAME,
-                String.format(CONTENT_TEMPLATE, ratingCriteria, stringifiedDataPrompt),
+                String.format(CONTENT_TEMPLATE, generateRatingCriteria(), stringifiedDataPrompt),
                 generateContentConfig
         );
         List<LabeledResponse> parsedResponse = parseResponse(response);
-        validateSizeMatch(parsedResponse, unlabeledFeatures.size());
-        return combineFeaturesWithResponse(unlabeledFeatures, parsedResponse);
+        validateSizeMatch(parsedResponse, unlabeledPosts.size());
+        return combineWithResponse(unlabeledPosts, parsedResponse);
+    }
+
+    private String generateRatingCriteria() {
+        return featureProvider.getFeatures().stream()
+                .map(Feature::getFormattedLabelingCriteria)
+                .collect(Collectors.joining(System.lineSeparator()));
     }
 
     @Override
@@ -62,9 +70,9 @@ public class GeminiLabeler implements Labeler {
         return MODEL_NAME;
     }
 
-    private String convertToString(List<PostFeaturePrompt> prompts) {
+    private String convertToString(List<Post> posts) {
         try {
-            return objectMapper.writeValueAsString(prompts);
+            return objectMapper.writeValueAsString(posts);
         } catch (JsonProcessingException e) {
             throw new IllegalStateException("질문 생성중 예외 발생",e);
         }
@@ -83,10 +91,10 @@ public class GeminiLabeler implements Labeler {
         if(parsedResponse.size() != size) throw new IllegalStateException("응답의 사이즈가 맞지 않습니다.");
     }
 
-    private List<LabeledPost> combineFeaturesWithResponse(List<PostFeature> unlabeledFeatures, List<LabeledResponse> response) {
+    private List<LabeledPost> combineWithResponse(List<Post> unlabeledPosts, List<LabeledResponse> response) {
         List<LabeledPost> labeledPosts = new ArrayList<>();
-        for (int i = 0; i < unlabeledFeatures.size(); i++) {
-            PostFeature feature = unlabeledFeatures.get(i);
+        for (int i = 0; i < unlabeledPosts.size(); i++) {
+            Post feature = unlabeledPosts.get(i);
             LabeledResponse label = response.get(i);
             labeledPosts.add(new LabeledPost(feature.id(), label.score(), label.reasoning()));
         }

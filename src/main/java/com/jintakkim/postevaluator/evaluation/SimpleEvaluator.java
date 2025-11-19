@@ -9,26 +9,26 @@ import java.util.List;
 
 @RequiredArgsConstructor
 public class SimpleEvaluator implements Evaluator {
-    private final List<EvaluationPost> evaluationPosts;
+    private final List<PostToEvaluation> postToEvaluations;
     private final AlgorithmMetric algorithmMetric;
 
     @Override
     public EvaluateResult evaluate(RecommendAlgorithm recommendAlgorithm) {
-        List<Double> score = evaluationPosts.stream().map(EvaluationPost::score).toList();
-        List<Double> predScore = predictScore(recommendAlgorithm);
-        MetricResult metricResult = algorithmMetric.calculateCost(score, predScore);
-        List<Long> topErrorFeatureIds = convertTopErrorIndicesToFeatureIds(metricResult.topErrorOccurredIndexes());
+        List<Double> labelScores = postToEvaluations.stream().map(PostToEvaluation::labeledScore).toList();
+        List<Double> predScores = predictScores(recommendAlgorithm);
+        MetricResult metricResult = algorithmMetric.calculateCost(labelScores, predScores);
+        List<Long> topErrorFeatureIds = convertTopErrorIndexesToFeatureIds(metricResult.topErrorOccurredIndexes());
         return new EvaluateResult(algorithmMetric,metricResult.cost(), topErrorFeatureIds);
     }
 
-    private List<Double> predictScore(RecommendAlgorithm recommendAlgorithm) {
-        return evaluationPosts.stream()
-                .map(post -> recommendAlgorithm.calculateScore(post.feature()))
+    private List<Double> predictScores(RecommendAlgorithm recommendAlgorithm) {
+        return postToEvaluations.stream()
+                .map(post -> recommendAlgorithm.calculateScore(post.post()))
                 .toList();
     }
 
-    private List<Long> convertTopErrorIndicesToFeatureIds(List<Integer> topErrorIndexes) {
-        return topErrorIndexes.stream().map(idx -> evaluationPosts.get(idx).feature().id()).toList();
+    private List<Long> convertTopErrorIndexesToFeatureIds(List<Integer> topErrorIndexes) {
+        return topErrorIndexes.stream().map(idx -> postToEvaluations.get(idx).post().id()).toList();
     }
 
 }

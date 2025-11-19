@@ -2,7 +2,7 @@ package com.jintakkim.postevaluator.core;
 
 public record LabeledPost(
         Long id,
-        long featureId,
+        long postId,
         double score,
         String reasoning
 ) {
@@ -11,12 +11,12 @@ public record LabeledPost(
         validate(score, reasoning);
     }
 
-    public LabeledPost(long featureId, double score, String reasoning) {
-        this(null, featureId, score, reasoning);
+    public LabeledPost(long postId, double score, String reasoning) {
+        this(null, postId, score, reasoning);
     }
 
-    public LabeledPost(long featureId, String score, String reasoning) {
-        this(null, featureId, parseScore(score), reasoning);
+    public LabeledPost(long postId, String score, String reasoning) {
+        this(null, postId, parseScore(score), reasoning);
     }
 
     private void validate(double score, String reasoning) {

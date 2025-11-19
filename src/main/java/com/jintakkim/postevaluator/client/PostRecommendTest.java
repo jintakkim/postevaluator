@@ -21,7 +21,7 @@ public class PostRecommendTest {
         this.appConfig = appConfig;
     }
 
-    public EvaluateResult simpleTest(RecommendAlgorithm recommendAlgorithm) {
+    public EvaluateResult test(RecommendAlgorithm recommendAlgorithm) {
         return appConfig.evaluatorConfig.evaluator.evaluate(recommendAlgorithm);
     }
 

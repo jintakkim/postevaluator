@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.genai.types.GenerateContentConfig;
 import com.google.genai.types.Schema;
 import com.google.genai.types.Type;
-import com.jintakkim.postevaluator.config.feature.FeatureConfig;
+import com.jintakkim.postevaluator.feature.FeatureProvider;
 import com.jintakkim.postevaluator.labeling.GeminiLabeler;
 import com.jintakkim.postevaluator.labeling.Labeler;
 
@@ -12,21 +12,15 @@ import java.util.List;
 import java.util.Map;
 
 public class LabelerConfig {
-    private final FeatureConfig featureConfig;
 
     public final Labeler labeler;
 
     public LabelerConfig(
-            FeatureConfig featureConfig,
+            FeatureProvider featureProvider,
             GeminiConfig geminiConfig,
             ObjectMapper objectMapper
     ) {
-        this.featureConfig = featureConfig;
-        this.labeler = new GeminiLabeler(getRatingCriteria(), geminiConfig.client, buildGenerateContentConfig(), objectMapper);
-    }
-
-    private String getRatingCriteria() {
-        return String.join(System.lineSeparator(), featureConfig.getCriteria());
+        this.labeler = new GeminiLabeler(featureProvider, geminiConfig.client, buildGenerateContentConfig(), objectMapper);
     }
 
     private GenerateContentConfig buildGenerateContentConfig() {

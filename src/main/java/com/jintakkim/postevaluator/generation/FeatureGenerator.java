@@ -1,10 +1,10 @@
 package com.jintakkim.postevaluator.generation;
 
-import com.jintakkim.postevaluator.core.PostFeature;
+import com.jintakkim.postevaluator.core.Post;
 
 import java.util.List;
 
 public interface FeatureGenerator {
-    List<PostFeature> generate(int size);
+    List<Post> generate(int size);
     String getModelName();
 }

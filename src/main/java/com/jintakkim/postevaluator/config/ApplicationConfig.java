@@ -2,7 +2,6 @@ package com.jintakkim.postevaluator.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jintakkim.postevaluator.DatasetManager;
-import com.jintakkim.postevaluator.config.feature.FeatureConfig;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -21,16 +20,16 @@ public class ApplicationConfig {
             DatasetConfig datasetConfig,
             AlgorithmMetricConfig algorithmMetricConfig
     ) {
-        this.dbConfig = new DbConfig();
+        this.dbConfig = new DbConfig(featureConfig.featureRegistry);
         this.geminiConfig = new GeminiConfig();
         this.objectMapper = new ObjectMapper();
-        this.generatorConfig = new GeneratorConfig(featureConfig, geminiConfig, objectMapper);
-        this.labelerConfig = new LabelerConfig(featureConfig, geminiConfig, objectMapper);
+        this.generatorConfig = new GeneratorConfig(featureConfig.featureRegistry, geminiConfig, objectMapper);
+        this.labelerConfig = new LabelerConfig(featureConfig.featureRegistry, geminiConfig, objectMapper);
         this.algorithmMetricConfig = algorithmMetricConfig;
         this.datasetManager = new DatasetManager(
                 datasetConfig.targetDatasetSize,
                 datasetConfig.setupStrategy,
-                dbConfig.postFeatureRepository,
+                dbConfig.postRepository,
                 dbConfig.labeledPostRepository,
                 generatorConfig.featureGenerator,
                 labelerConfig.labeler
