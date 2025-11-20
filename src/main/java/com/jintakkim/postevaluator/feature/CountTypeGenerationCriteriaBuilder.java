@@ -66,9 +66,6 @@ public class CountTypeGenerationCriteriaBuilder {
         }
 
         public GenerationCriteria build() {
-            if(median != null) log.warn("중앙값을 지정하지 않았습니다.");
-            if(std != null) log.warn("표준편차를 지정하지 않았습니다.");
-
             Map<String, String> attributes = new HashMap<>();
             attributes.put("distribution", DISTRIBUTION_NAME);
             attributes.put("min", String.valueOf(MIN_COUNT_VALUE));
