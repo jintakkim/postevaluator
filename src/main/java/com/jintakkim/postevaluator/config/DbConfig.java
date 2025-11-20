@@ -16,12 +16,12 @@ public class DbConfig {
     public final LabeledPostRepository labeledPostRepository;
     public final PostRepository postRepository;
 
-    private final PostTableSynchronizer postTableSynchronizer;
+    private final PostDatabaseSynchronizer postTableSynchronizer;
 
     public DbConfig(String fileName, FeatureProvider featureProvider) {
         this.jdbi = Jdbi.create(createDbUrl(fileName));
         registerRowMappers();
-        this.postTableSynchronizer = new PostTableSynchronizer(jdbi, featureProvider);
+        this.postTableSynchronizer = new PostDatabaseSynchronizer(jdbi, featureProvider);
         postTableSynchronizer.synchronizeTable();
         this.postRepository = new JdbiPostRepository(jdbi, featureProvider);
         this.labeledPostRepository = new JdbiLabeledPostRepository(jdbi);

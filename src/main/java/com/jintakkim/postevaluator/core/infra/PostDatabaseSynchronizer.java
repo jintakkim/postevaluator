@@ -13,13 +13,13 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class PostTableSynchronizer extends TableSynchronizer {
+public class PostDatabaseSynchronizer extends DatabaseSynchronizer {
     private static final String POST_TABLE_NAME = "post";
     private static final String LABELED_POST_TABLE_NAME = "labeled_post";
 
     private final FeatureProvider featureProvider;
 
-    public PostTableSynchronizer(Jdbi jdbi, FeatureProvider featureProvider) {
+    public PostDatabaseSynchronizer(Jdbi jdbi, FeatureProvider featureProvider) {
         super(jdbi);
         this.featureProvider = featureProvider;
     }
@@ -50,7 +50,6 @@ public class PostTableSynchronizer extends TableSynchronizer {
     @Override
     protected void createTable(Handle handle) {
         String postTable = createPostTable();
-        System.out.println(postTable);
         handle.execute(postTable);
         String labeledPostTable = createLabeledPostTable();
         handle.execute(labeledPostTable);
