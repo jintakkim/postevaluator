@@ -11,7 +11,7 @@ public class PostRepositoryTest extends LocalFileDbIntegrationTest {
     @Test
     @DisplayName("PostFeature를 저장한 뒤, 반환된 ID로 다시 조회하면 동일한 객체를 반환한다")
     void shouldSaveAndRetrievePostFeature() {
-        rollbackTest(() -> {
+        rollbackTest((handle) -> {
             Post savedPost = postRepository.save(createPost());
             List<Post> posts = postRepository.findByIdIn(List.of(savedPost.id()));
             Assertions.assertThat(posts)

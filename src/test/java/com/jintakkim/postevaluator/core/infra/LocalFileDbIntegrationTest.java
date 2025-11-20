@@ -1,12 +1,13 @@
 package com.jintakkim.postevaluator.core.infra;
 
-import com.jintakkim.postevaluator.config.DbConfig;
 import com.jintakkim.postevaluator.core.LabeledPost;
 import com.jintakkim.postevaluator.core.Post;
 import com.jintakkim.postevaluator.feature.Feature;
-import com.jintakkim.postevaluator.feature.FeatureProvider;
 import com.jintakkim.postevaluator.fixture.FeatureFixture;
+import com.jintakkim.postevaluator.test.TestDbConfig;
+import com.jintakkim.postevaluator.test.TestFeatureProviderGenerator;
 import lombok.extern.slf4j.Slf4j;
+import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.Jdbi;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.parallel.Execution;
@@ -23,37 +24,31 @@ import java.util.Map;
 public abstract class LocalFileDbIntegrationTest {
     protected static final List<Feature> TEST_FEATURES = List.of(FeatureFixture.COMMENT_COUNT, FeatureFixture.LIKE_COUNT);
 
+    protected static TestDbConfig dbConfig;
     protected static LabeledPostRepository labeledPostRepository;
     protected static PostRepository postRepository;
     protected static Jdbi jdbi;
+    protected static PostDatabaseSynchronizer postTableSynchronizer;
 
     @BeforeAll
     static void initialize() {
-        DbConfig dbConfig = new DbConfig("test.db", featureProvider());
+        dbConfig = TestDbConfig.withSetting(TestFeatureProviderGenerator.generate(TEST_FEATURES) ,true);
         jdbi = dbConfig.jdbi;
         labeledPostRepository = dbConfig.labeledPostRepository;
         postRepository = dbConfig.postRepository;
+        postTableSynchronizer = dbConfig.postTableSynchronizer;
     }
 
-    static void rollbackTest(Runnable runnable) {
+    static void rollbackTest(Executable executable) {
         jdbi.useTransaction(handle -> {
-            runnable.run();
+            executable.execute(handle);
             handle.rollback();
         });
     }
 
-    static FeatureProvider featureProvider() {
-        return new FeatureProvider() {
-            @Override
-            public List<String> getFeatureNames() {
-                return TEST_FEATURES.stream().map(Feature::getName).toList();
-            }
-
-            @Override
-            public List<Feature> getFeatures() {
-                return TEST_FEATURES;
-            }
-        };
+    @FunctionalInterface
+    interface Executable {
+        void execute(Handle handle);
     }
 
     static Post createPost() {
@@ -65,5 +60,31 @@ public abstract class LocalFileDbIntegrationTest {
 
     static LabeledPost createLabeledPost(Long featureId) {
         return new LabeledPost(featureId, 1.0, "reason??");
+    }
+
+    @AfterAll
+    static void cleanupTables() {
+        dbConfig.cleanupTables();
+    }
+
+    static boolean tableExists(String tableName) {
+        return jdbi.withHandle(handle ->
+                handle.createQuery("SELECT name FROM sqlite_master WHERE type='table' AND name = :tableName")
+                        .bind("tableName", tableName)
+                        .mapTo(String.class)
+                        .findFirst()
+                        .isPresent()
+        );
+    }
+
+    static boolean columnExists(String tableName, String columnName) {
+        return jdbi.withHandle(handle -> {
+            List<Map<String, Object>> columnsInfo = handle
+                    .createQuery("PRAGMA table_info(" + tableName + ")")
+                    .mapToMap()
+                    .list();
+            return columnsInfo.stream()
+                    .anyMatch(row -> row.get("name").equals(columnName));
+        });
     }
 }

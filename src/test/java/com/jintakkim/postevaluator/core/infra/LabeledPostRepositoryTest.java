@@ -13,7 +13,7 @@ public class LabeledPostRepositoryTest extends LocalFileDbIntegrationTest {
     @Test
     @DisplayName("LabeledPost 저장 후, findAll()로 조회 시 정확히 일치해야 한다")
     void saveShouldBeRetrievedByFindAll() {
-        rollbackTest(() -> {
+        rollbackTest((handle) -> {
             Post post = postRepository.save(createPost());
             LabeledPost savedLabeledPost = labeledPostRepository.save(createLabeledPost(post.id()));
             Assertions.assertThat(labeledPostRepository.findAll())
@@ -25,7 +25,7 @@ public class LabeledPostRepositoryTest extends LocalFileDbIntegrationTest {
     @Test
     @DisplayName("래이블링 되지 않은 postId를 반환한다")
     void findUnlabeledFeatureIdsShouldReturnOnlyIdsWithNoLabels() {
-        rollbackTest(() -> {
+        rollbackTest((handle) -> {
             Post post_1 = postRepository.save(createPost());
             Post post_2 = postRepository.save(createPost());
             Post post_3 = postRepository.save(createPost());
