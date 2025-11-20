@@ -3,7 +3,7 @@ package com.jintakkim.postevaluator.evaluation.metric;
 import java.util.List;
 
 public record MetricResult(
-        List<Integer> topErrorOccurredIndexes,
+        List<Long> topErrorOccurredPostIds,
         double cost
 ) {
 }

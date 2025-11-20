@@ -5,7 +5,7 @@ import com.jintakkim.postevaluator.core.Post;
 import com.jintakkim.postevaluator.core.SetupStrategy;
 import com.jintakkim.postevaluator.core.infra.LabeledPostRepository;
 import com.jintakkim.postevaluator.core.infra.PostRepository;
-import com.jintakkim.postevaluator.evaluation.LabeledPostToEvaluation;
+import com.jintakkim.postevaluator.evaluation.LabeledPost;
 import com.jintakkim.postevaluator.generation.FeatureGenerator;
 import com.jintakkim.postevaluator.labeling.Labeler;
 import lombok.RequiredArgsConstructor;
@@ -77,17 +77,15 @@ public class DatasetManager {
         labeler.label(posts).forEach(labeledPostRepository::save);
     }
 
-    public List<LabeledPostToEvaluation> getEvaluationPosts() {
+    public List<LabeledPost> getLabeledPosts() {
         List<Label> labels = getLabeledPostsToEvaluate();
-        Map<Long, Post> postFeatures = postRepository.findByIdIn(extractFeatureIds(labels)).stream()
+        Map<Long, Post> posts = postRepository.findByIdIn(extractFeatureIds(labels)).stream()
                 .collect(Collectors.toMap(Post::id, Function.identity()));
         return labels.stream()
-                .map(labeledPost -> new LabeledPostToEvaluation(
-                        postFeatures.get(labeledPost.postId()),
-                        labeledPost.score(),
-                        labeledPost.reasoning()
-                        )
-                ).toList();
+                .map(label -> {
+                    Post post = posts.get(label.postId());
+                    return new LabeledPost(post.id(), post.features(), label.score());
+                }).toList();
     }
 
     private List<Label> getLabeledPostsToEvaluate() {

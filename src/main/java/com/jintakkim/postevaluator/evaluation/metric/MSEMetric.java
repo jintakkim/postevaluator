@@ -1,5 +1,7 @@
 package com.jintakkim.postevaluator.evaluation.metric;
 
+import com.jintakkim.postevaluator.evaluation.PostPrediction;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -22,36 +24,29 @@ public class MSEMetric implements AlgorithmMetric {
     }
 
     @Override
-    public MetricResult calculateCost(List<Double> score, List<Double> scorePredict) {
-        validateInput(score, scorePredict);
-        if(score.isEmpty()) return new MetricResult(List.of(), 0.0);
+    public MetricResult calculateCost(List<PostPrediction> postPredictions) {
         double sumSquaredError = 0.0;
-        int scoreSize = score.size();
+        int scoreSize = postPredictions.size();
         List<ErrorRecord> errorRecords = new ArrayList<>(scoreSize);
 
-        for (int i = 0; i < scoreSize; i++) {
-            double error = score.get(i) - scorePredict.get(i);
+        for (PostPrediction prediction : postPredictions) {
+            double error = prediction.labeledScore() - prediction.predictScore();
             double squaredError = error * error;
-            errorRecords.add(new ErrorRecord(squaredError, i));
+            errorRecords.add(new ErrorRecord(squaredError, prediction.postId()));
             sumSquaredError += squaredError;
         }
-        double cost = sumSquaredError / scoreSize ;
-        List<Integer> highCostIndices = calHighCostIndexes(errorRecords);
-        return new MetricResult(highCostIndices, cost);
+        double cost = sumSquaredError / scoreSize;
+        List<Long> highCostPostIds = calHighCost(errorRecords);
+        return new MetricResult(highCostPostIds, cost);
     }
 
-    private void validateInput(List<Double> score, List<Double> scorePredict) {
-        if (scorePredict == null || score == null || score.size() != scorePredict.size())
-            throw new IllegalArgumentException("score과 scorePredict 리스트는 null이 아니어야 하며, 크기가 같아야 합니다.");
-    }
-
-    private List<Integer> calHighCostIndexes(List<ErrorRecord> errorRecords) {
+    private List<Long> calHighCost(List<ErrorRecord> errorRecords) {
         return errorRecords.stream()
                 .sorted(Comparator.comparingDouble(ErrorRecord::squaredError).reversed())
                 .limit(topErrorCount)
-                .map(ErrorRecord::originalIndex)
+                .map(ErrorRecord::postId)
                 .toList();
     }
 
-    private record ErrorRecord(double squaredError, int originalIndex) {}
+    private record ErrorRecord(double squaredError, long postId) {}
 }

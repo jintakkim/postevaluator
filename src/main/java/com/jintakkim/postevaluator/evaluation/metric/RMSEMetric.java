@@ -1,5 +1,7 @@
 package com.jintakkim.postevaluator.evaluation.metric;
 
+import com.jintakkim.postevaluator.evaluation.PostPrediction;
+
 import java.util.List;
 
 public class RMSEMetric implements AlgorithmMetric {
@@ -21,8 +23,8 @@ public class RMSEMetric implements AlgorithmMetric {
     }
 
     @Override
-    public MetricResult calculateCost(List<Double> score, List<Double> scorePredict) {
-        MetricResult mseMetricResult = mseMetric.calculateCost(score, scorePredict);
-        return new MetricResult(mseMetricResult.topErrorOccurredIndexes(), Math.sqrt(mseMetricResult.cost()));
+    public MetricResult calculateCost(List<PostPrediction> postPredictions) {
+        MetricResult mseMetricResult = mseMetric.calculateCost(postPredictions);
+        return new MetricResult(mseMetricResult.topErrorOccurredPostIds(), Math.sqrt(mseMetricResult.cost()));
     }
 }
