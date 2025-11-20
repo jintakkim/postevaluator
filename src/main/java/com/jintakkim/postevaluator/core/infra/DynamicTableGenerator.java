@@ -1,10 +1,14 @@
 package com.jintakkim.postevaluator.core.infra;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class DynamicTableGenerator {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class DynamicTableGenerator {
     private static final String PRIMARY_KEY_SQL = "id INTEGER PRIMARY KEY AUTOINCREMENT";
 
     public static String generate(String tableName, List<ColumnDefinition> columns) {
