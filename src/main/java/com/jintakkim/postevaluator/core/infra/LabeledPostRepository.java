@@ -1,14 +1,14 @@
 package com.jintakkim.postevaluator.core.infra;
 
-import com.jintakkim.postevaluator.core.LabeledPost;
+import com.jintakkim.postevaluator.core.Label;
 
 import java.util.List;
 
 public interface LabeledPostRepository {
-    LabeledPost save(LabeledPost post);
+    Label save(Label post);
     List<Long> findUnlabeledPostIds();
-    List<LabeledPost> findAll();
-    List<LabeledPost> findRandomly(int count);
+    List<Label> findAll();
+    List<Label> findRandomly(int count);
     void deleteAll();
     int count();
 }

@@ -1,6 +1,6 @@
 package com.jintakkim.postevaluator.test;
 
-import com.jintakkim.postevaluator.core.LabeledPost;
+import com.jintakkim.postevaluator.core.Label;
 import com.jintakkim.postevaluator.core.Post;
 import com.jintakkim.postevaluator.core.infra.*;
 import com.jintakkim.postevaluator.feature.FeatureProvider;
@@ -35,7 +35,7 @@ public class TestDbConfig {
 
     private void registerRowMappers() {
         jdbi.registerRowMapper(Post.class, new PostMapper());
-        jdbi.registerRowMapper(LabeledPost.class, new LabeledPostMapper());
+        jdbi.registerRowMapper(Label.class, new LabelMapper());
     }
 
     private static String createDbUrl(String fileName) {

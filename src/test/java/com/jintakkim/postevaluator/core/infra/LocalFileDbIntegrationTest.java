@@ -1,6 +1,6 @@
 package com.jintakkim.postevaluator.core.infra;
 
-import com.jintakkim.postevaluator.core.LabeledPost;
+import com.jintakkim.postevaluator.core.Label;
 import com.jintakkim.postevaluator.core.Post;
 import com.jintakkim.postevaluator.feature.Feature;
 import com.jintakkim.postevaluator.fixture.FeatureFixture;
@@ -58,8 +58,8 @@ public abstract class LocalFileDbIntegrationTest {
         ));
     }
 
-    static LabeledPost createLabeledPost(Long featureId) {
-        return new LabeledPost(featureId, 1.0, "reason??");
+    static Label createLabeledPost(Long featureId) {
+        return new Label(featureId, 1.0, "reason??");
     }
 
     @AfterAll

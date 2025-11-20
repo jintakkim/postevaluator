@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.genai.Client;
 import com.google.genai.types.GenerateContentConfig;
 import com.google.genai.types.GenerateContentResponse;
-import com.jintakkim.postevaluator.core.LabeledPost;
+import com.jintakkim.postevaluator.core.Label;
 import com.jintakkim.postevaluator.core.Post;
 import com.jintakkim.postevaluator.feature.Feature;
 import com.jintakkim.postevaluator.feature.FeatureProvider;
@@ -47,7 +47,7 @@ public class GeminiLabeler implements Labeler {
     }
 
     @Override
-    public List<LabeledPost> label(List<Post> unlabeledPosts) {
+    public List<Label> label(List<Post> unlabeledPosts) {
         String stringifiedDataPrompt = convertToString(unlabeledPosts);
         GenerateContentResponse response = client.models.generateContent(
                 MODEL_NAME,
@@ -91,13 +91,13 @@ public class GeminiLabeler implements Labeler {
         if(parsedResponse.size() != size) throw new IllegalStateException("응답의 사이즈가 맞지 않습니다.");
     }
 
-    private List<LabeledPost> combineWithResponse(List<Post> unlabeledPosts, List<LabeledResponse> response) {
-        List<LabeledPost> labeledPosts = new ArrayList<>();
+    private List<Label> combineWithResponse(List<Post> unlabeledPosts, List<LabeledResponse> response) {
+        List<Label> labels = new ArrayList<>();
         for (int i = 0; i < unlabeledPosts.size(); i++) {
             Post feature = unlabeledPosts.get(i);
             LabeledResponse label = response.get(i);
-            labeledPosts.add(new LabeledPost(feature.id(), label.score(), label.reasoning()));
+            labels.add(new Label(feature.id(), label.score(), label.reasoning()));
         }
-        return labeledPosts;
+        return labels;
     }
 }

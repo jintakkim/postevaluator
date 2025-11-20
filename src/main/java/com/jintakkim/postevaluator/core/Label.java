@@ -1,21 +1,21 @@
 package com.jintakkim.postevaluator.core;
 
-public record LabeledPost(
+public record Label(
         Long id,
         long postId,
         double score,
         String reasoning
 ) {
 
-    public LabeledPost {
+    public Label {
         validate(score, reasoning);
     }
 
-    public LabeledPost(long postId, double score, String reasoning) {
+    public Label(long postId, double score, String reasoning) {
         this(null, postId, score, reasoning);
     }
 
-    public LabeledPost(long postId, String score, String reasoning) {
+    public Label(long postId, String score, String reasoning) {
         this(null, postId, parseScore(score), reasoning);
     }
 

@@ -1,6 +1,6 @@
 package com.jintakkim.postevaluator.core.infra;
 
-import com.jintakkim.postevaluator.core.LabeledPost;
+import com.jintakkim.postevaluator.core.Label;
 import com.jintakkim.postevaluator.core.Post;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -8,17 +8,17 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-public class LabeledPostRepositoryTest extends LocalFileDbIntegrationTest {
+public class LabelRepositoryTest extends LocalFileDbIntegrationTest {
 
     @Test
-    @DisplayName("LabeledPost 저장 후, findAll()로 조회 시 정확히 일치해야 한다")
+    @DisplayName("Label 저장 후, findAll()로 조회 시 정확히 일치해야 한다")
     void saveShouldBeRetrievedByFindAll() {
         rollbackTest((handle) -> {
             Post post = postRepository.save(createPost());
-            LabeledPost savedLabeledPost = labeledPostRepository.save(createLabeledPost(post.id()));
+            Label savedLabel = labeledPostRepository.save(createLabeledPost(post.id()));
             Assertions.assertThat(labeledPostRepository.findAll())
                     .hasSize(1)
-                    .containsExactly(savedLabeledPost);
+                    .containsExactly(savedLabel);
         });
     }
 

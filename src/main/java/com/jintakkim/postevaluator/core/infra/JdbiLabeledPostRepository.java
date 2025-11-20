@@ -1,6 +1,6 @@
 package com.jintakkim.postevaluator.core.infra;
 
-import com.jintakkim.postevaluator.core.LabeledPost;
+import com.jintakkim.postevaluator.core.Label;
 import org.jdbi.v3.core.Jdbi;
 
 import java.util.List;
@@ -13,7 +13,7 @@ public class JdbiLabeledPostRepository implements LabeledPostRepository {
     }
 
     @Override
-    public LabeledPost save(LabeledPost post) {
+    public Label save(Label post) {
         String sql = """
             INSERT INTO labeled_post
                 (post_id, score, reasoning)
@@ -29,7 +29,7 @@ public class JdbiLabeledPostRepository implements LabeledPostRepository {
                         .mapTo(Long.class)
                         .one()
         );
-        return new LabeledPost(
+        return new Label(
                 id,
                 post.postId(),
                 post.score(),
@@ -57,17 +57,17 @@ public class JdbiLabeledPostRepository implements LabeledPostRepository {
     }
 
     @Override
-    public List<LabeledPost> findAll() {
+    public List<Label> findAll() {
         String sql = "SELECT * FROM labeled_post";
         return jdbi.withHandle(handle ->
                 handle.createQuery(sql)
-                        .mapTo(LabeledPost.class)
+                        .mapTo(Label.class)
                         .list()
         );
     }
 
     @Override
-    public List<LabeledPost> findRandomly(int count) {
+    public List<Label> findRandomly(int count) {
         String sql = """
                     SELECT id, post_id, score, created_at
                     FROM labeled_post
@@ -77,7 +77,7 @@ public class JdbiLabeledPostRepository implements LabeledPostRepository {
         return jdbi.withHandle(handle ->
                 handle.createQuery(sql)
                         .bind("count", count)
-                        .mapTo(LabeledPost.class)
+                        .mapTo(Label.class)
                         .list()
         );
     }

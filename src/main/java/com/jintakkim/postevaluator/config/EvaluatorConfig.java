@@ -16,7 +16,7 @@ public class EvaluatorConfig {
             AlgorithmMetric algorithmMetric,
             DatasetManager datasetManager
     ) {
-        this.evaluator = new SimpleEvaluator(datasetManager.getEvaluationPosts(), algorithmMetric);
+        this.evaluator = new SimpleEvaluator(algorithmMetric, datasetManager.getEvaluationPosts());
         this.bulkEvaluator = new BulkEvaluator(evaluator);
     }
 
