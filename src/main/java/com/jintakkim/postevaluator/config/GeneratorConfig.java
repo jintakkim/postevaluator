@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.genai.types.GenerateContentConfig;
 import com.google.genai.types.Schema;
 import com.google.genai.types.Type;
-import com.jintakkim.postevaluator.feature.Feature;
-import com.jintakkim.postevaluator.feature.FeatureProvider;
+import com.jintakkim.postevaluator.feature.FeatureDefinition;
+import com.jintakkim.postevaluator.feature.FeatureDefinitionProvider;
 import com.jintakkim.postevaluator.generation.FeatureGenerator;
 import com.jintakkim.postevaluator.generation.GeminiFeatureGenerator;
 
@@ -14,17 +14,17 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class GeneratorConfig {
-    private final FeatureProvider featureProvider;
+    private final FeatureDefinitionProvider featureDefinitionProvider;
     private final GeminiConfig geminiConfig;
 
     public final FeatureGenerator featureGenerator;
 
     public GeneratorConfig(
-            FeatureProvider featureProvider,
+            FeatureDefinitionProvider featureDefinitionProvider,
             GeminiConfig geminiConfig,
             ObjectMapper objectMapper
     ) {
-        this.featureProvider = featureProvider;
+        this.featureDefinitionProvider = featureDefinitionProvider;
         this.geminiConfig = geminiConfig;
         featureGenerator = new GeminiFeatureGenerator(geminiConfig.client, buildGenerateContentConfig(), objectMapper);
     }
@@ -45,15 +45,15 @@ public class GeneratorConfig {
     }
 
     private Schema featureSchema() {
-        Map<String, Schema> schemaProperties = featureProvider.getFeatures().stream()
+        Map<String, Schema> schemaProperties = featureDefinitionProvider.getFeatureDefinitions().stream()
                 .collect(Collectors.toMap(
-                        Feature::getName,
+                        FeatureDefinition::name,
                         feature -> Schema.builder()
-                                .type(geminiConfig.parseType(feature.getType()))
-                                .description(feature.getGenerationCriteria().toString())
+                                .type(geminiConfig.parseType(feature.type()))
+                                .description(feature.generationCriteria().toString())
                                 .build()
                 ));
-        List<String> requiredFields = featureProvider.getFeatureNames();
+        List<String> requiredFields = featureDefinitionProvider.getFeatureNames();
         return Schema.builder()
                 .description("게시글의 post 들을 담은 Object")
                 .type(Type.Known.OBJECT)

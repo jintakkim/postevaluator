@@ -2,7 +2,7 @@ package com.jintakkim.postevaluator.feature;
 
 import java.util.List;
 
-public interface FeatureProvider {
+public interface FeatureDefinitionProvider {
     List<String> getFeatureNames();
-    List<Feature> getFeatures();
+    List<FeatureDefinition> getFeatureDefinitions();
 }

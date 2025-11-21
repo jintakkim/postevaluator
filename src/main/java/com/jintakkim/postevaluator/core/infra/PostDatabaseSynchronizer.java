@@ -1,7 +1,7 @@
 package com.jintakkim.postevaluator.core.infra;
 
-import com.jintakkim.postevaluator.feature.Feature;
-import com.jintakkim.postevaluator.feature.FeatureProvider;
+import com.jintakkim.postevaluator.feature.FeatureDefinition;
+import com.jintakkim.postevaluator.feature.FeatureDefinitionProvider;
 import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.Jdbi;
 
@@ -17,11 +17,11 @@ public class PostDatabaseSynchronizer extends DatabaseSynchronizer {
     private static final String POST_TABLE_NAME = "post";
     private static final String LABELED_POST_TABLE_NAME = "labeled_post";
 
-    private final FeatureProvider featureProvider;
+    private final FeatureDefinitionProvider featureDefinitionProvider;
 
-    public PostDatabaseSynchronizer(Jdbi jdbi, FeatureProvider featureProvider) {
+    public PostDatabaseSynchronizer(Jdbi jdbi, FeatureDefinitionProvider featureDefinitionProvider) {
         super(jdbi);
-        this.featureProvider = featureProvider;
+        this.featureDefinitionProvider = featureDefinitionProvider;
     }
 
     @Override
@@ -31,10 +31,10 @@ public class PostDatabaseSynchronizer extends DatabaseSynchronizer {
 
     @Override
     protected String getCurrentTableHash() {
-        List<Feature> features = featureProvider.getFeatures();
-        if (features == null || features.isEmpty()) throw new IllegalArgumentException("features는 null이거나 empty일 수 없습니다.");
-        String combinedHashes = features.stream()
-                .map(Feature::getDefinitionHash)
+        List<FeatureDefinition> featureDefinitions = featureDefinitionProvider.getFeatureDefinitions();
+        if (featureDefinitions == null || featureDefinitions.isEmpty()) throw new IllegalArgumentException("features는 null이거나 empty일 수 없습니다.");
+        String combinedHashes = featureDefinitions.stream()
+                .map(FeatureDefinition::getDefinitionHash)
                 .sorted()
                 .collect(Collectors.joining("|"));
 
@@ -56,8 +56,8 @@ public class PostDatabaseSynchronizer extends DatabaseSynchronizer {
     }
 
     private String createPostTable() {
-        List<ColumnDefinition> columnDefinitions = featureProvider.getFeatures().stream()
-                .map(feature -> new ColumnDefinition(feature.getName(), SqlType.convertFeatureTypeToSqlType(feature.getType()), false))
+        List<ColumnDefinition> columnDefinitions = featureDefinitionProvider.getFeatureDefinitions().stream()
+                .map(feature -> new ColumnDefinition(feature.name(), SqlType.convertFeatureTypeToSqlType(feature.type()), false))
                 .toList();
         return DynamicTableGenerator.generate(POST_TABLE_NAME, columnDefinitions);
     }

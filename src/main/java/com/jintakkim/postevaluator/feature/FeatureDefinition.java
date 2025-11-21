@@ -2,19 +2,17 @@ package com.jintakkim.postevaluator.feature;
 
 import com.jintakkim.postevaluator.core.FeatureType;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
-@RequiredArgsConstructor
 @Getter
-public class Feature {
-    private final String name;
-    private final FeatureType type;
-    private final GenerationCriteria generationCriteria;
-    private final LabelingCriteria labelingCriteria;
-
+public record FeatureDefinition(
+        String name,
+        FeatureType type,
+        GenerationCriteria generationCriteria,
+        LabelingCriteria labelingCriteria
+) {
     public String getDefinitionHash() {
         String definitionString = String.join(
                 name,
@@ -22,7 +20,6 @@ public class Feature {
                 generationCriteria.toString(),
                 labelingCriteria.toString()
         );
-
         return UUID.nameUUIDFromBytes(definitionString.getBytes(StandardCharsets.UTF_8)).toString();
     }
 

@@ -2,7 +2,7 @@ package com.jintakkim.postevaluator.core.infra;
 
 import com.google.common.base.CaseFormat;
 import com.jintakkim.postevaluator.core.Post;
-import com.jintakkim.postevaluator.feature.FeatureProvider;
+import com.jintakkim.postevaluator.feature.FeatureDefinitionProvider;
 import lombok.RequiredArgsConstructor;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.statement.Update;
@@ -14,11 +14,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class JdbiPostRepository implements PostRepository {
     private final Jdbi jdbi;
-    private final FeatureProvider featureProvider;
+    private final FeatureDefinitionProvider featureDefinitionProvider;
 
     @Override
     public Post save(Post post) {
-        List<String> snakeCaseFeatureColumnNames = featureProvider.getFeatureNames().stream()
+        List<String> snakeCaseFeatureColumnNames = featureDefinitionProvider.getFeatureNames().stream()
                 .map(camelName-> CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, camelName))
                 .toList();
         String sql = generateInsertSql(snakeCaseFeatureColumnNames);

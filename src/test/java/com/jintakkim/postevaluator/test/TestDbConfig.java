@@ -3,7 +3,7 @@ package com.jintakkim.postevaluator.test;
 import com.jintakkim.postevaluator.core.Label;
 import com.jintakkim.postevaluator.core.Post;
 import com.jintakkim.postevaluator.core.infra.*;
-import com.jintakkim.postevaluator.feature.FeatureProvider;
+import com.jintakkim.postevaluator.feature.FeatureDefinitionProvider;
 import org.jdbi.v3.core.Jdbi;
 
 import java.nio.file.Paths;
@@ -17,16 +17,16 @@ public class TestDbConfig {
     public final PostRepository postRepository;
     public final PostDatabaseSynchronizer postTableSynchronizer;
 
-    public TestDbConfig(FeatureProvider featureProvider) {
+    public TestDbConfig(FeatureDefinitionProvider featureDefinitionProvider) {
         this.jdbi = Jdbi.create(createDbUrl(DEFAULT_FILE_NAME));
         registerRowMappers();
-        this.postTableSynchronizer = new PostDatabaseSynchronizer(jdbi, featureProvider);
-        this.postRepository = new JdbiPostRepository(jdbi, featureProvider);
+        this.postTableSynchronizer = new PostDatabaseSynchronizer(jdbi, featureDefinitionProvider);
+        this.postRepository = new JdbiPostRepository(jdbi, featureDefinitionProvider);
         this.labeledPostRepository = new JdbiLabeledPostRepository(jdbi);
     }
 
-    public static TestDbConfig withSetting(FeatureProvider FeatureProvider, boolean synchronizeTable) {
-        TestDbConfig testDbConfig = new TestDbConfig(FeatureProvider);
+    public static TestDbConfig withSetting(FeatureDefinitionProvider FeatureDefinitionProvider, boolean synchronizeTable) {
+        TestDbConfig testDbConfig = new TestDbConfig(FeatureDefinitionProvider);
         if(synchronizeTable) {
             testDbConfig.postTableSynchronizer.synchronizeTable();
         }

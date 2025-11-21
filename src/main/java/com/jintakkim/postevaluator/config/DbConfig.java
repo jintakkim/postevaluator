@@ -3,7 +3,7 @@ package com.jintakkim.postevaluator.config;
 import com.jintakkim.postevaluator.core.Label;
 import com.jintakkim.postevaluator.core.Post;
 import com.jintakkim.postevaluator.core.infra.*;
-import com.jintakkim.postevaluator.feature.FeatureProvider;
+import com.jintakkim.postevaluator.feature.FeatureDefinitionProvider;
 import org.jdbi.v3.core.Jdbi;
 
 import java.nio.file.Paths;
@@ -18,17 +18,17 @@ public class DbConfig {
 
     private final PostDatabaseSynchronizer postTableSynchronizer;
 
-    public DbConfig(String fileName, FeatureProvider featureProvider) {
+    public DbConfig(String fileName, FeatureDefinitionProvider featureDefinitionProvider) {
         this.jdbi = Jdbi.create(createDbUrl(fileName));
         registerRowMappers();
-        this.postTableSynchronizer = new PostDatabaseSynchronizer(jdbi, featureProvider);
+        this.postTableSynchronizer = new PostDatabaseSynchronizer(jdbi, featureDefinitionProvider);
         postTableSynchronizer.synchronizeTable();
-        this.postRepository = new JdbiPostRepository(jdbi, featureProvider);
+        this.postRepository = new JdbiPostRepository(jdbi, featureDefinitionProvider);
         this.labeledPostRepository = new JdbiLabeledPostRepository(jdbi);
     }
 
-    public DbConfig(FeatureProvider featureProvider) {
-        this(DEFAULT_FILE_NAME, featureProvider);
+    public DbConfig(FeatureDefinitionProvider featureDefinitionProvider) {
+        this(DEFAULT_FILE_NAME, featureDefinitionProvider);
     }
 
     private void registerRowMappers() {

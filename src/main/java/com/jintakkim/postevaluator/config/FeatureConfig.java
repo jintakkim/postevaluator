@@ -1,15 +1,15 @@
 package com.jintakkim.postevaluator.config;
 
-import com.jintakkim.postevaluator.feature.Feature;
-import com.jintakkim.postevaluator.feature.FeatureRegistry;
+import com.jintakkim.postevaluator.feature.FeatureDefinition;
+import com.jintakkim.postevaluator.feature.FeatureDefinitionRegistry;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class FeatureConfig {
-    public final FeatureRegistry featureRegistry;
+    public final FeatureDefinitionRegistry featureRegistry;
 
     private FeatureConfig(
-            FeatureRegistry featureRegistry
+            FeatureDefinitionRegistry featureRegistry
     ) {
         this.featureRegistry = featureRegistry;
     }
@@ -19,15 +19,15 @@ public class FeatureConfig {
     }
 
     public static class Builder {
-        private final FeatureRegistry featureRegistry = new FeatureRegistry();
+        private final FeatureDefinitionRegistry featureRegistry = new FeatureDefinitionRegistry();
 
-        public Builder addFeature(Feature feature) {
-            featureRegistry.register(feature);
+        public Builder addFeature(FeatureDefinition featureDefinition) {
+            featureRegistry.register(featureDefinition);
             return this;
         }
 
         public FeatureConfig build() {
-            if(featureRegistry.getFeatures().isEmpty()) {
+            if(featureRegistry.getFeatureDefinitions().isEmpty()) {
                 throw new IllegalArgumentException("아무 Feature도 등록되지 않았습니다. 적어도 한개를 등록해야 합니다.");
             }
             return new FeatureConfig(featureRegistry);

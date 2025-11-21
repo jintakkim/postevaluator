@@ -8,8 +8,8 @@ import com.google.genai.types.GenerateContentConfig;
 import com.google.genai.types.GenerateContentResponse;
 import com.jintakkim.postevaluator.core.Label;
 import com.jintakkim.postevaluator.core.Post;
-import com.jintakkim.postevaluator.feature.Feature;
-import com.jintakkim.postevaluator.feature.FeatureProvider;
+import com.jintakkim.postevaluator.feature.FeatureDefinition;
+import com.jintakkim.postevaluator.feature.FeatureDefinitionProvider;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,18 +29,18 @@ public class GeminiLabeler implements Labeler {
             출력은 스키마를 따른다
             """;
 
-    private final FeatureProvider featureProvider;
+    private final FeatureDefinitionProvider featureDefinitionProvider;
     private final Client client;
     private final GenerateContentConfig generateContentConfig;
     private final ObjectMapper objectMapper;
 
     public GeminiLabeler(
-            FeatureProvider featureProvider,
+            FeatureDefinitionProvider featureDefinitionProvider,
             Client client,
             GenerateContentConfig generateContentConfig,
             ObjectMapper objectMapper
     ) {
-        this.featureProvider = featureProvider;
+        this.featureDefinitionProvider = featureDefinitionProvider;
         this.client = client;
         this.generateContentConfig = generateContentConfig;
         this.objectMapper = objectMapper;
@@ -60,8 +60,8 @@ public class GeminiLabeler implements Labeler {
     }
 
     private String generateRatingCriteria() {
-        return featureProvider.getFeatures().stream()
-                .map(Feature::getFormattedLabelingCriteria)
+        return featureDefinitionProvider.getFeatureDefinitions().stream()
+                .map(FeatureDefinition::getFormattedLabelingCriteria)
                 .collect(Collectors.joining(System.lineSeparator()));
     }
 
