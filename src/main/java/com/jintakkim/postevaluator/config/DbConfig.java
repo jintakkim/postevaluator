@@ -17,17 +17,26 @@ public class DbConfig {
 
     private volatile boolean initialized = false;
     private final DefinitionProperties definitionProperties;
-    public final Jdbi jdbi;
+    private final Jdbi jdbi;
+
+    public final JdbiContext jdbiContext;
     public final UserRepository userRepository;
     public final PostRepository postRepository;
     public final LabelRepository labelRepository;
+    public final SampleRepository sampleRepository;
 
     public DbConfig(String fileName, DefinitionProperties definitionProperties) {
         this.jdbi = Jdbi.create(createDbUrl(fileName));
+        this.jdbiContext = new JdbiContext(jdbi);
         this.definitionProperties = definitionProperties;
-        this.userRepository = new JdbiUserRepository(jdbi, definitionProperties.userDefinition());
-        this.postRepository = new JdbiPostRepository(jdbi, definitionProperties.postDefinition());
-        this.labelRepository = new JdbiLabelRepository(jdbi);
+        this.userRepository = new JdbiUserRepository(jdbiContext, definitionProperties.userDefinition());
+        this.postRepository = new JdbiPostRepository(jdbiContext, definitionProperties.postDefinition());
+        this.labelRepository = new JdbiLabelRepository(jdbiContext);
+        this.sampleRepository = new JdbiSampleRepository(
+                definitionProperties.userDefinition(),
+                definitionProperties.postDefinition(),
+                jdbiContext
+        );
     }
 
     public DbConfig(DefinitionProperties definitionProperties) {
@@ -51,8 +60,9 @@ public class DbConfig {
     }
 
     private void initializeDbSchema() {
-        new TableDefinitionHashDatabaseInitializer(jdbi, Post.name, definitionProperties.postDefinition).initialize();
-        new TableDefinitionHashDatabaseInitializer(jdbi, User.name, definitionProperties.userDefinition).initialize();
+        InitStatus postInitStatus = new TableDefinitionHashDatabaseInitializer(jdbiContext, Post.name, definitionProperties.postDefinition()).initialize();
+        InitStatus userInitStatus = new TableDefinitionHashDatabaseInitializer(jdbiContext, User.name, definitionProperties.userDefinition()).initialize();
+        new LabelDatabaseInitializer(jdbiContext).initialize(postInitStatus, userInitStatus);
     }
 
     private static String createDbUrl(String fileName) {

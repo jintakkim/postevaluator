@@ -14,8 +14,8 @@ public class LabelerConfig {
             ObjectMapper objectMapper
     ) {
         this.labeler = new SequentialGeminiLabeler(
-                definitionProperties.userDefinition,
-                definitionProperties.postDefinition,
+                definitionProperties.userDefinition(),
+                definitionProperties.postDefinition(),
                 geminiConfig.client,
                 objectMapper
         );

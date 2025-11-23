@@ -2,9 +2,6 @@ package com.jintakkim.postevaluator.config;
 
 import com.jintakkim.postevaluator.persistance.DatasetManager;
 import com.jintakkim.postevaluator.config.properties.DatasetProperties;
-import com.jintakkim.postevaluator.generation.PostGenerator;
-import com.jintakkim.postevaluator.generation.UserGenerator;
-import com.jintakkim.postevaluator.labeling.Labeler;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -14,9 +11,8 @@ public class DatasetConfig {
     public DatasetConfig(
             DatasetProperties datasetProperties,
             DbConfig dbConfig,
-            UserGenerator userGenerator,
-            PostGenerator postGenerator,
-            Labeler labeler
+            GeneratorConfig generatorConfig,
+            LabelerConfig labelerConfig
     ) {
         this.datasetManager = new DatasetManager(
                 dbConfig.jdbiContext,
@@ -26,9 +22,9 @@ public class DatasetConfig {
                 dbConfig.userRepository,
                 dbConfig.labelRepository,
                 dbConfig.sampleRepository,
-                userGenerator,
-                postGenerator,
-                labeler
+                generatorConfig.userGenerator,
+                generatorConfig.postGenerator,
+                labelerConfig.labeler
         );
     }
 
