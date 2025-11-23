@@ -41,7 +41,7 @@ public class JdbiLabelRepository implements LabelRepository {
 
     @Override
     public void saveAll(Collection<Label> labels) {
-        jdbiContext.useHandle(handle -> {
+        jdbiContext.useTransaction(handle -> {
             PreparedBatch batch = handle.prepareBatch(INSERT_SQL);
             for (Label label : labels) {
                 batch.bind("postId", label.postId())

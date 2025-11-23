@@ -28,7 +28,7 @@ public final class DynamicEntityRepositoryUtils {
     public static <T extends DynamicEntity> void batchSave(JdbiContext jdbiContext, String tableName, EntitySchema entitySchema, Collection<T> entities) {
         Map<String, String> fieldToColumnMap = entitySchema.getFieldToColumnMap();
         String sql = DynamicSqlGenerateUtils.generateInsert(tableName, fieldToColumnMap.values());
-        jdbiContext.useHandle(handle -> {
+        jdbiContext.useTransaction(handle -> {
             PreparedBatch batch = handle.prepareBatch(sql);
             for(T entity: entities) {
                 bindBatchParameters(batch, entity, fieldToColumnMap);

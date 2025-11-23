@@ -55,6 +55,5 @@ public class LabelDatabaseInitializer {
 
     private void deleteAll() {
         jdbiContext.useHandle(handle -> handle.execute("delete from label"));
-        log.debug("라벨링 정보들을 전부 삭제 했습니다.");
     }
 }

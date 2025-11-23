@@ -37,4 +37,21 @@ public class JdbiContext {
             jdbi.useHandle(consumer);
         }
     }
+
+    public <X extends Exception> void useTransaction(HandleConsumer<X> callback) throws X {
+        Handle boundHandle = transactionHandle.get();
+
+        if (boundHandle != null) {
+            callback.useHandle(boundHandle);
+        } else {
+            jdbi.useTransaction(handle -> {
+                try {
+                    transactionHandle.set(handle);
+                    callback.useHandle(handle);
+                } finally {
+                    transactionHandle.remove();
+                }
+            });
+        }
+    }
 }

@@ -54,7 +54,7 @@ public class TableDefinitionHashDatabaseInitializer {
     }
 
     private void recreateTable(String currentHash) {
-        jdbiContext.useHandle(handle -> {
+        jdbiContext.useTransaction(handle -> {
             dropTable(handle);
             createTable(handle);
             updateTableHash(currentHash);
