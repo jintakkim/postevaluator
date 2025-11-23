@@ -1,12 +1,10 @@
 package com.jintakkim.postevaluator.feature;
 
 import com.jintakkim.postevaluator.FeatureType;
-import lombok.Getter;
 
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
-@Getter
 public record FeatureDefinition(
         String name,
         FeatureType type,
