@@ -1,6 +1,6 @@
 package com.jintakkim.postevaluator;
 
-public interface Sample {
+public interface SampleAccessor {
     Post post();
     User user();
 }
