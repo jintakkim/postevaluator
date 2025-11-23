@@ -10,20 +10,14 @@ import java.util.UUID;
 public record FeatureDefinition(
         String name,
         FeatureType type,
-        GenerationCriteria generationCriteria,
-        LabelingCriteria labelingCriteria
+        GenerationCriteria generationCriteria
 ) {
     public String getDefinitionHash() {
         String definitionString = String.join(
                 name,
                 type.name(),
-                generationCriteria.toString(),
-                labelingCriteria.toString()
+                generationCriteria.toString()
         );
         return UUID.nameUUIDFromBytes(definitionString.getBytes(StandardCharsets.UTF_8)).toString();
-    }
-
-    public String getFormattedLabelingCriteria() {
-        return name + ":" + labelingCriteria.getValues();
     }
 }

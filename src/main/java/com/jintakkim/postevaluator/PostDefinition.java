@@ -13,8 +13,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 public record PostDefinition(
-        LabelingCriteria labelingCriteria,
-        Map<String, FeatureDefinition> featureDefinitions
+        Map<String, FeatureDefinition> featureDefinitions,
+        LabelingCriteria labelingCriteria
 ) implements EntitySchema {
 
     public Object parseFeature(String featureName, Object featureValue) {

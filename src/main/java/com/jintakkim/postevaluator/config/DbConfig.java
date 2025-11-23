@@ -5,7 +5,6 @@ import com.jintakkim.postevaluator.Label;
 import com.jintakkim.postevaluator.Post;
 import com.jintakkim.postevaluator.LabeledSample;
 import com.jintakkim.postevaluator.User;
-import com.jintakkim.postevaluator.core.persistance.*;
 import com.jintakkim.postevaluator.persistance.*;
 import com.jintakkim.postevaluator.persistance.initialization.TableDefinitionHashDatabaseInitializer;
 import org.jdbi.v3.core.Jdbi;
