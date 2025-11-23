@@ -9,10 +9,9 @@ import lombok.NoArgsConstructor;
 final class GeminiUtils {
     public static Type.Known parseType(FeatureType featureType) {
         return switch (featureType) {
-            case INTEGER -> Type.Known.INTEGER;
-            case STRING -> Type.Known.STRING;
+            case INTEGER, LONG -> Type.Known.INTEGER;
+            case STRING, DATE -> Type.Known.STRING;
             case DOUBLE -> Type.Known.NUMBER;
-            case DATE -> Type.Known.STRING;
         };
     }
 }

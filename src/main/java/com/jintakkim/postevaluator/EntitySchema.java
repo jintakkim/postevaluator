@@ -8,6 +8,7 @@ import java.util.Map;
 public interface EntitySchema {
     String getDefinitionHash();
     List<ColumnDefinition> getColumnDefinitions();
+    ColumnDefinition getColumnDefinitionElseThrow(String name);
     /**
      * Key: Feature Name (CamelCase) - 예: likeCount
      * Value: Column Name (SnakeCase) - 예: like_count

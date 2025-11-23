@@ -45,18 +45,18 @@ public class DbConfig {
 
     public void initialize() {
         if(!initialized) {
-            registerRowMappers();
             initializeDbSchema();
+            registerRowMappers();
             initialized = true;
         }
     }
 
     private void registerRowMappers() {
-        jdbi.registerRowMapper(User.class, new UserMapper());
-        jdbi.registerRowMapper(Post.class, new PostMapper());
+        jdbi.registerRowMapper(User.class, new UserMapper(definitionProperties.userDefinition()));
+        jdbi.registerRowMapper(Post.class, new PostMapper(definitionProperties.postDefinition()));
         jdbi.registerRowMapper(Label.class, new LabelMapper());
-        jdbi.registerRowMapper(UnlabeledSample.class, new UnlabeledSampleMapper());
-        jdbi.registerRowMapper(LabeledSample.class, new LabeledSampleMapper());
+        jdbi.registerRowMapper(UnlabeledSample.class, new UnlabeledSampleMapper(definitionProperties.userDefinition(), definitionProperties.postDefinition()));
+        jdbi.registerRowMapper(LabeledSample.class, new LabeledSampleMapper(definitionProperties.userDefinition(), definitionProperties.postDefinition()));
     }
 
     private void initializeDbSchema() {

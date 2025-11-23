@@ -25,7 +25,7 @@ public class TableDefinitionHashDatabaseInitializer {
         InitStatus initStatus = getStatus(currentHash);
         return switch (initStatus) {
             case NOT_EXISTS -> {
-                handleNotChanged(currentHash);
+                handleNotExists(currentHash);
                 yield initStatus;
             }
             case CHANGED -> {
@@ -33,7 +33,7 @@ public class TableDefinitionHashDatabaseInitializer {
                 yield initStatus;
             }
             case NOT_CHANGED -> {
-                handleNotExists(currentHash);
+                handleNotChanged(currentHash);
                 yield initStatus;
             }
         };
