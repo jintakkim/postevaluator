@@ -1,6 +1,6 @@
 package com.jintakkim.postevaluator.evaluation.metric;
 
-import com.jintakkim.postevaluator.evaluation.PostPrediction;
+import com.jintakkim.postevaluator.evaluation.SamplePrediction;
 
 import java.util.List;
 public interface AlgorithmMetric {
@@ -13,5 +13,5 @@ public interface AlgorithmMetric {
      * 비용(cost)을 계산하는 로직
      * @return 비용
      */
-    MetricResult calculateCost(List<PostPrediction> postPredictions);
+    MetricResult calculateCost(List<SamplePrediction> predictions);
 }

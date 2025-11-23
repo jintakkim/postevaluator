@@ -1,0 +1,20 @@
+package com.jintakkim.postevaluator.core.persistance;
+
+import com.jintakkim.postevaluator.core.Post;
+import org.jdbi.v3.core.mapper.RowMapper;
+import org.jdbi.v3.core.statement.StatementContext;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Map;
+
+public class PostMapper implements RowMapper<Post> {
+    private static final String ID_COLUMN_NAME = "id";
+
+    @Override
+    public Post map(ResultSet rs, StatementContext ctx) throws SQLException {
+        Map<String, Object> fields = MapperUtils.extractFields(rs, ID_COLUMN_NAME);
+        long id = rs.getLong(ID_COLUMN_NAME);
+        return new Post(id, fields);
+    }
+}

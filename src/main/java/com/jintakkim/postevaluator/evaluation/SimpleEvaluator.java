@@ -1,6 +1,6 @@
 package com.jintakkim.postevaluator.evaluation;
 
-import com.jintakkim.postevaluator.core.Post;
+import com.jintakkim.postevaluator.core.LabeledSample;
 import com.jintakkim.postevaluator.core.RecommendAlgorithm;
 import com.jintakkim.postevaluator.evaluation.metric.AlgorithmMetric;
 import com.jintakkim.postevaluator.evaluation.metric.MetricResult;
@@ -9,33 +9,29 @@ import java.util.List;
 
 public class SimpleEvaluator implements Evaluator {
     private final AlgorithmMetric algorithmMetric;
-    private final List<LabeledPost> labeledPosts;
+    private final List<LabeledSample> labeledSamples;
 
-    public SimpleEvaluator(AlgorithmMetric algorithmMetric, List<LabeledPost> labeledPosts) {
+    public SimpleEvaluator(AlgorithmMetric algorithmMetric, List<LabeledSample> labeledSamples) {
         this.algorithmMetric = algorithmMetric;
-        this.labeledPosts = labeledPosts;
+        this.labeledSamples = labeledSamples;
         validate();
     }
 
     @Override
     public EvaluateResult evaluate(RecommendAlgorithm recommendAlgorithm) {
-        List<PostPrediction> postPredictions = predictScores(recommendAlgorithm);
-        MetricResult metricResult = algorithmMetric.calculateCost(postPredictions);
+        List<SamplePrediction> predictions = predictScores(recommendAlgorithm);
+        MetricResult metricResult = algorithmMetric.calculateCost(predictions);
         return new EvaluateResult(algorithmMetric, metricResult.cost(), metricResult.topErrorOccurredPostIds());
     }
 
-    private List<PostPrediction> predictScores(RecommendAlgorithm recommendAlgorithm) {
-        return labeledPosts.stream()
-                .map(labeledPost -> new PostPrediction(
-                        labeledPost.id(),
-                        labeledPost.labeledScore(),
-                        recommendAlgorithm.calculateScore(labeledPost)
-                ))
+    private List<SamplePrediction> predictScores(RecommendAlgorithm recommendAlgorithm) {
+        return labeledSamples.stream()
+                .map(sample -> new SamplePrediction(sample, recommendAlgorithm.calculateScore(sample)))
                 .toList();
     }
 
     private void validate() {
-        if(labeledPosts == null || labeledPosts.isEmpty()) {
+        if(labeledSamples == null || labeledSamples.isEmpty()) {
             throw new IllegalArgumentException("평가 데이터는 한개 이상있어야 합니다.");
         }
     }
