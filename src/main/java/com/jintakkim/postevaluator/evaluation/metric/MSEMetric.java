@@ -1,6 +1,6 @@
 package com.jintakkim.postevaluator.evaluation.metric;
 
-import com.jintakkim.postevaluator.evaluation.PostPrediction;
+import com.jintakkim.postevaluator.evaluation.SamplePrediction;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -24,12 +24,12 @@ public class MSEMetric implements AlgorithmMetric {
     }
 
     @Override
-    public MetricResult calculateCost(List<PostPrediction> postPredictions) {
+    public MetricResult calculateCost(List<SamplePrediction> predictions) {
         double sumSquaredError = 0.0;
-        int scoreSize = postPredictions.size();
+        int scoreSize = predictions.size();
         List<ErrorRecord> errorRecords = new ArrayList<>(scoreSize);
 
-        for (PostPrediction prediction : postPredictions) {
+        for (SamplePrediction prediction : predictions) {
             double error = prediction.labeledScore() - prediction.predictScore();
             double squaredError = error * error;
             errorRecords.add(new ErrorRecord(squaredError, prediction.postId()));
