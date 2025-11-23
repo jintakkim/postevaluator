@@ -1,12 +1,12 @@
 package com.jintakkim.postevaluator.config;
 
+import com.jintakkim.postevaluator.*;
 import com.jintakkim.postevaluator.config.properties.DefinitionProperties;
-import com.jintakkim.postevaluator.Label;
-import com.jintakkim.postevaluator.Post;
-import com.jintakkim.postevaluator.LabeledSample;
-import com.jintakkim.postevaluator.User;
 import com.jintakkim.postevaluator.persistance.*;
+import com.jintakkim.postevaluator.persistance.initialization.InitStatus;
+import com.jintakkim.postevaluator.persistance.initialization.LabelDatabaseInitializer;
 import com.jintakkim.postevaluator.persistance.initialization.TableDefinitionHashDatabaseInitializer;
+import com.jintakkim.postevaluator.persistance.mapping.*;
 import org.jdbi.v3.core.Jdbi;
 
 import java.nio.file.Paths;
@@ -25,8 +25,8 @@ public class DbConfig {
     public DbConfig(String fileName, DefinitionProperties definitionProperties) {
         this.jdbi = Jdbi.create(createDbUrl(fileName));
         this.definitionProperties = definitionProperties;
-        this.userRepository = new JdbiUserRepository(jdbi, definitionProperties.userDefinition);
-        this.postRepository = new JdbiPostRepository(jdbi, definitionProperties.postDefinition);
+        this.userRepository = new JdbiUserRepository(jdbi, definitionProperties.userDefinition());
+        this.postRepository = new JdbiPostRepository(jdbi, definitionProperties.postDefinition());
         this.labelRepository = new JdbiLabelRepository(jdbi);
     }
 
@@ -46,6 +46,7 @@ public class DbConfig {
         jdbi.registerRowMapper(User.class, new UserMapper());
         jdbi.registerRowMapper(Post.class, new PostMapper());
         jdbi.registerRowMapper(Label.class, new LabelMapper());
+        jdbi.registerRowMapper(UnlabeledSample.class, new UnlabeledSampleMapper());
         jdbi.registerRowMapper(LabeledSample.class, new LabeledSampleMapper());
     }
 

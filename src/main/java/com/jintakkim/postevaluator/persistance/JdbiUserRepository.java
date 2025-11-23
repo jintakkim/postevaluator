@@ -1,6 +1,7 @@
 package com.jintakkim.postevaluator.persistance;
 
 import com.jintakkim.postevaluator.EntitySchema;
+import com.jintakkim.postevaluator.Post;
 import com.jintakkim.postevaluator.User;
 import lombok.RequiredArgsConstructor;
 import org.jdbi.v3.core.Jdbi;
@@ -20,6 +21,16 @@ public class JdbiUserRepository implements UserRepository {
         return jdbi.withHandle(handle ->
                 handle.createQuery(sql)
                         .bindList("ids", ids)
+                        .mapTo(User.class)
+                        .list()
+        );
+    }
+
+    @Override
+    public List<User> findAll() {
+        String sql = "SELECT * FROM user";
+        return jdbi.withHandle(handle ->
+                handle.createQuery(sql)
                         .mapTo(User.class)
                         .list()
         );

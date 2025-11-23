@@ -8,4 +8,4 @@ public record LabeledSample(
         Post post,
         double labelScore,
         String labelReason
-) implements Sample {}
+) implements SampleAccessor {}

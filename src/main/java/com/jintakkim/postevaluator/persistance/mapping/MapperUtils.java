@@ -1,4 +1,4 @@
-package com.jintakkim.postevaluator.persistance;
+package com.jintakkim.postevaluator.persistance.mapping;
 
 import com.google.common.base.CaseFormat;
 import lombok.AccessLevel;

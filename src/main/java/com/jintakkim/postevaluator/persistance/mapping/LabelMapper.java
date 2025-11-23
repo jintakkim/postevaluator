@@ -1,4 +1,4 @@
-package com.jintakkim.postevaluator.persistance;
+package com.jintakkim.postevaluator.persistance.mapping;
 
 import com.jintakkim.postevaluator.Label;
 import org.jdbi.v3.core.mapper.RowMapper;

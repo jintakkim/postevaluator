@@ -1,4 +1,4 @@
-package com.jintakkim.postevaluator.persistance;
+package com.jintakkim.postevaluator.persistance.mapping;
 
 import com.jintakkim.postevaluator.Post;
 import com.jintakkim.postevaluator.LabeledSample;

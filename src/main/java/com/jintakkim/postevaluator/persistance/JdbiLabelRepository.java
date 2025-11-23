@@ -56,24 +56,24 @@ public class JdbiLabelRepository implements LabelRepository {
         });
     }
 
-    @Override
-    public List<Long> findUnlabeledUserIds() {
-        String sql = """
-            SELECT u.id
-            FROM User u
-            WHERE NOT EXISTS (
-                SELECT 1
-                FROM label l
-                WHERE l.user_id = p.id
-            )
-            """;
-
-        return jdbi.withHandle(handle ->
-                handle.createQuery(sql)
-                        .mapTo(Long.class)
-                        .list()
-        );
-    }
+//    @Override
+//    public List<Long> findUnlabeledUserIds() {
+//        String sql = """
+//            SELECT u.id
+//            FROM User u
+//            WHERE NOT EXISTS (
+//                SELECT 1
+//                FROM label l
+//                WHERE l.user_id = p.id
+//            )
+//            """;
+//
+//        return jdbi.withHandle(handle ->
+//                handle.createQuery(sql)
+//                        .mapTo(Long.class)
+//                        .list()
+//        );
+//    }
 
     @Override
     public List<Label> findAll() {
@@ -85,21 +85,21 @@ public class JdbiLabelRepository implements LabelRepository {
         );
     }
 
-    @Override
-    public List<Label> findRandomly(int count) {
-        String sql = """
-                    SELECT id, post_id, user_id, score, reasoning
-                    FROM label
-                    ORDER BY RANDOM()
-                    LIMIT :count
-                    """;
-        return jdbi.withHandle(handle ->
-                handle.createQuery(sql)
-                        .bind("count", count)
-                        .mapTo(Label.class)
-                        .list()
-        );
-    }
+//    @Override
+//    public List<Label> findRandomly(int count) {
+//        String sql = """
+//                    SELECT id, post_id, user_id, score, reasoning
+//                    FROM label
+//                    ORDER BY RANDOM()
+//                    LIMIT :count
+//                    """;
+//        return jdbi.withHandle(handle ->
+//                handle.createQuery(sql)
+//                        .bind("count", count)
+//                        .mapTo(Label.class)
+//                        .list()
+//        );
+//    }
 
     @Override
     public void deleteAll() {

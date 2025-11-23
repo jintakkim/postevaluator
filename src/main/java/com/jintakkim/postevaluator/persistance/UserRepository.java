@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface UserRepository {
     List<User> findByIdIn(Collection<Long> ids);
+    List<User> findAll();
     void deleteAll();
     User save(User user);
     void saveAll(Collection<User> users);

@@ -21,6 +21,7 @@ public class DatasetManager implements LabeledSampleProvider {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final LabelRepository labelRepository;
+    private final SampleRepository sampleRepository;
     private final PostGenerator postGenerator;
     private final UserGenerator userGenerator;
     private final Labeler labeler;
@@ -34,6 +35,7 @@ public class DatasetManager implements LabeledSampleProvider {
             PostRepository postRepository,
             UserRepository userRepository,
             LabelRepository labelRepository,
+            SampleRepository sampleRepository,
             UserGenerator userGenerator,
             PostGenerator postGenerator,
             Labeler labeler
@@ -45,6 +47,7 @@ public class DatasetManager implements LabeledSampleProvider {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
         this.labelRepository = labelRepository;
+        this.sampleRepository = sampleRepository;
         this.userGenerator = userGenerator;
         this.postGenerator = postGenerator;
         this.labeler = labeler;
@@ -114,7 +117,7 @@ public class DatasetManager implements LabeledSampleProvider {
     }
 
     private void doLabeling() {
-        List<Long> unlabeledUserIds = labelRepository.findUnlabeledUserIds();
+        List<UnlabeledSample> unlabeledSamples = sampleRepository.findUnlabeledSamples();
         if(unlabeledUserIds.isEmpty()) return;
         log.info("레이블링되지 않은 {}개의 데이터를 레이블링 합니다.", unlabeledUserIds.size());
         List<User> unlabeledUsers = userRepository.findByIdIn(unlabeledUserIds);
@@ -142,25 +145,4 @@ public class DatasetManager implements LabeledSampleProvider {
     public int getLeftSize() {
         return 0;
     }
-
-//    public List<Label> getLabel() {
-//        List<Label> labels = getLabeledPostsToEvaluate();
-//        Map<Long, Post> posts = postRepository.findByIdIn(extractFeatureIds(labels)).stream()
-//                .collect(Collectors.toMap(Post::id, Function.identity()));
-//        return labels.stream()
-//                .map(label -> {
-//                    Post post = posts.get(label.postId());
-//                    return new LabeledPost(post.id(), post.features(), label.score());
-//                }).toList();
-//    }
-
-//    private List<Label> getLabeledPostsToEvaluate() {
-//        if(labelRepository.count() > targetDatasetSize)
-//            return labelRepository.findRandomly(targetDatasetSize);
-//        return labelRepository.findAll();
-//    }
-//
-//    private List<Long> extractFeatureIds(List<Label> labels) {
-//        return labels.stream().map(Label::postId).toList();
-//    }
 }

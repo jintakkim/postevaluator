@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
-abstract class SingleUserGeminiLabeler implements Labeler {
+abstract class SingleUserGeminiLabeler {
     private static final String MODEL_NAME = "gemini-2.0-flash";
 
     private final UserDefinition userDefinition;
@@ -57,7 +57,6 @@ abstract class SingleUserGeminiLabeler implements Labeler {
         return labelDtos.stream().map(labelDto -> convertLabelDtoToLabel(labelDto, user.id())).toList();
     }
 
-    @Override
     public String getModelName() {
         return MODEL_NAME;
     }

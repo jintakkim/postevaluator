@@ -1,0 +1,27 @@
+package com.jintakkim.postevaluator.persistance.mapping;
+
+import com.jintakkim.postevaluator.Post;
+import com.jintakkim.postevaluator.UnlabeledSample;
+import com.jintakkim.postevaluator.User;
+import org.jdbi.v3.core.mapper.RowMapper;
+import org.jdbi.v3.core.statement.StatementContext;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Map;
+import java.util.Set;
+
+public class UnlabeledSampleMapper implements RowMapper<UnlabeledSample> {
+    @Override
+    public UnlabeledSample map(ResultSet rs, StatementContext ctx) throws SQLException {
+        long userId = rs.getLong("u_id");
+        Map<String, Object> userFields = MapperUtils.extractFieldsByAlias(rs, "u", Set.of("id"));
+        User user = new User(userId, userFields);
+
+        long postId = rs.getLong("p_id");
+        Map<String, Object> postFields = MapperUtils.extractFieldsByAlias(rs, "p", Set.of("id"));
+        Post post = new Post(postId, postFields);
+
+        return new UnlabeledSample(user, post);
+    }
+}
