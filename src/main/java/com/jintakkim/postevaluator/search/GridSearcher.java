@@ -19,7 +19,6 @@ public class GridSearcher {
                     return new SearchResult(combination, evaluateResult);
                 })
                 .min(Comparator.comparingDouble((searchResult) -> searchResult.evaluateResult().cost()))
-                .orElseThrow(() -> new IllegalStateException("No combinations were evaluated."));
+                .orElseThrow();
     }
-
 }
