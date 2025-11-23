@@ -5,7 +5,6 @@ import com.jintakkim.postevaluator.generation.PostGenerator;
 import com.jintakkim.postevaluator.generation.UserGenerator;
 import com.jintakkim.postevaluator.labeling.Labeler;
 import lombok.extern.slf4j.Slf4j;
-import org.jdbi.v3.core.Jdbi;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -129,18 +128,20 @@ public class DatasetManager implements LabeledSampleProvider {
     }
 
     @Override
-    public List<LabeledSample> next(int batchSize) {
+    public List<LabeledSample> get(int offset, int limit) {
         if(!isInitialized) throw new IllegalStateException("데이터셋이 준비되어 있지 않습니다.");
-        return List.of();
+        return sampleRepository.findLabeledSamples(offset, limit);
+    }
+
+    @Override
+    public List<LabeledSample> getAll() {
+        if(!isInitialized) throw new IllegalStateException("데이터셋이 준비되어 있지 않습니다.");
+        return sampleRepository.findLabeledSamples();
     }
 
     @Override
     public int getTotalSize() {
-        return 0;
-    }
-
-    @Override
-    public int getLeftSize() {
-        return 0;
+        //라벨링 데이터 개수는 실질적으로 labeledSample 개수이다.
+        return labelRepository.count();
     }
 }

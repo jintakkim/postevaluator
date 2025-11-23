@@ -6,11 +6,13 @@ import java.util.List;
 @ThreadSafe
 public interface LabeledSampleProvider {
     /**
-     * labeledSample이 전부 소진될때까지 next를 호출할 수 있다.
-     * @param batchSize 만큼 sample을 반환한다. 만약 부족하다면 인자보다 적은 개수가 반환될 수 있다.
      * @return 전부 반환되었다면 빈 리스트를 반환한다.
      */
-    List<LabeledSample> next(int batchSize);
+    List<LabeledSample> get(int offset, int limit);
+
+    /**
+     * 데이터 셋이 한번에 메모리에 올리지 못할 정도로 많다면 OOM 발생가능
+     */
+    List<LabeledSample> getAll();
     int getTotalSize();
-    int getLeftSize();
 }
