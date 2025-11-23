@@ -3,9 +3,9 @@ package com.jintakkim.postevaluator.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.jintakkim.postevaluator.config.properties.DefinitionProperties;
-import com.jintakkim.postevaluator.UserGenerator;
+import com.jintakkim.postevaluator.generation.UserGenerator;
 import com.jintakkim.postevaluator.gemini.GeminiUserGenerator;
-import com.jintakkim.postevaluator.PostGenerator;
+import com.jintakkim.postevaluator.generation.PostGenerator;
 import com.jintakkim.postevaluator.gemini.GeminiPostGenerator;
 
 public class GeneratorConfig {

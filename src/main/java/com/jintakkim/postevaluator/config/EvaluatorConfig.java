@@ -1,6 +1,6 @@
 package com.jintakkim.postevaluator.config;
 
-import com.jintakkim.postevaluator.DatasetManager;
+import com.jintakkim.postevaluator.persistance.DatasetManager;
 import com.jintakkim.postevaluator.evaluation.BulkEvaluator;
 import com.jintakkim.postevaluator.evaluation.Evaluator;
 import com.jintakkim.postevaluator.evaluation.SimpleEvaluator;

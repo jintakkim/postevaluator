@@ -9,7 +9,7 @@ import com.google.genai.types.Schema;
 import com.google.genai.types.Type;
 import com.jintakkim.postevaluator.User;
 import com.jintakkim.postevaluator.UserDefinition;
-import com.jintakkim.postevaluator.UserGenerator;
+import com.jintakkim.postevaluator.generation.UserGenerator;
 import com.jintakkim.postevaluator.feature.FeatureDefinition;
 import lombok.extern.slf4j.Slf4j;
 

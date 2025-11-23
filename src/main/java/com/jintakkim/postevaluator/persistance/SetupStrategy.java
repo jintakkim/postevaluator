@@ -1,4 +1,4 @@
-package com.jintakkim.postevaluator;
+package com.jintakkim.postevaluator.persistance;
 
 public enum SetupStrategy {
     /**

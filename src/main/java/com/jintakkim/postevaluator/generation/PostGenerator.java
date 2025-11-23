@@ -1,4 +1,6 @@
-package com.jintakkim.postevaluator;
+package com.jintakkim.postevaluator.generation;
+
+import com.jintakkim.postevaluator.Post;
 
 import java.util.List;
 

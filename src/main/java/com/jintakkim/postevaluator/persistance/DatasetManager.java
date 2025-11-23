@@ -1,8 +1,8 @@
-package com.jintakkim.postevaluator;
+package com.jintakkim.postevaluator.persistance;
 
-import com.jintakkim.postevaluator.persistance.LabelRepository;
-import com.jintakkim.postevaluator.persistance.PostRepository;
-import com.jintakkim.postevaluator.persistance.UserRepository;
+import com.jintakkim.postevaluator.*;
+import com.jintakkim.postevaluator.generation.PostGenerator;
+import com.jintakkim.postevaluator.generation.UserGenerator;
 import com.jintakkim.postevaluator.labeling.Labeler;
 import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Jdbi;
