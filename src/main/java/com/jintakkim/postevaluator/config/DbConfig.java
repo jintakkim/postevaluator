@@ -15,19 +15,16 @@ public class DbConfig {
     private static final String DEFAULT_FILE_NAME = "post_evaluator.db";
     private static final String DIR = "user.home";
 
+    private volatile boolean initialized = false;
     private final DefinitionProperties definitionProperties;
     public final Jdbi jdbi;
-
     public final UserRepository userRepository;
     public final PostRepository postRepository;
     public final LabelRepository labelRepository;
 
-
     public DbConfig(String fileName, DefinitionProperties definitionProperties) {
         this.jdbi = Jdbi.create(createDbUrl(fileName));
         this.definitionProperties = definitionProperties;
-        registerRowMappers();
-        initializeDbSchema();
         this.userRepository = new JdbiUserRepository(jdbi, definitionProperties.userDefinition);
         this.postRepository = new JdbiPostRepository(jdbi, definitionProperties.postDefinition);
         this.labelRepository = new JdbiLabelRepository(jdbi);
@@ -35,6 +32,14 @@ public class DbConfig {
 
     public DbConfig(DefinitionProperties definitionProperties) {
         this(DEFAULT_FILE_NAME, definitionProperties);
+    }
+
+    public void initialize() {
+        if(!initialized) {
+            registerRowMappers();
+            initializeDbSchema();
+            initialized = true;
+        }
     }
 
     private void registerRowMappers() {
