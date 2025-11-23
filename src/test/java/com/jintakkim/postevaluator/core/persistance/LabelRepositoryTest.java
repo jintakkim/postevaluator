@@ -1,7 +1,7 @@
 package com.jintakkim.postevaluator.core.persistance;
 
-import com.jintakkim.postevaluator.core.Label;
-import com.jintakkim.postevaluator.core.Post;
+import com.jintakkim.postevaluator.Label;
+import com.jintakkim.postevaluator.Post;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

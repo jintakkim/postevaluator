@@ -1,6 +1,6 @@
 package com.jintakkim.postevaluator.evaluation;
 
-import com.jintakkim.postevaluator.core.LabeledSample;
+import com.jintakkim.postevaluator.LabeledSample;
 
 public record SamplePrediction(
         long postId,

@@ -1,7 +1,7 @@
 package com.jintakkim.postevaluator.config;
 
-import com.jintakkim.postevaluator.core.feature.FeatureDefinition;
-import com.jintakkim.postevaluator.core.feature.FeatureDefinitionRegistry;
+import com.jintakkim.postevaluator.feature.FeatureDefinition;
+import com.jintakkim.postevaluator.feature.FeatureDefinitionRegistry;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

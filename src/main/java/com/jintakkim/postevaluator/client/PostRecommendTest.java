@@ -1,7 +1,7 @@
 package com.jintakkim.postevaluator.client;
 
 import com.jintakkim.postevaluator.config.*;
-import com.jintakkim.postevaluator.core.RecommendAlgorithm;
+import com.jintakkim.postevaluator.RecommendAlgorithm;
 import com.jintakkim.postevaluator.evaluation.EvaluateResult;
 import com.jintakkim.postevaluator.search.GridSearcher;
 import com.jintakkim.postevaluator.search.ParametricRecommendAlgorithm;

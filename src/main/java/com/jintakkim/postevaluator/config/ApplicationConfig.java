@@ -2,7 +2,7 @@ package com.jintakkim.postevaluator.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jintakkim.postevaluator.config.properties.DefinitionProperties;
-import com.jintakkim.postevaluator.core.DatasetManager;
+import com.jintakkim.postevaluator.DatasetManager;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

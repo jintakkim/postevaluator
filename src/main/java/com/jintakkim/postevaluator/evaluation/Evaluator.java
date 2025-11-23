@@ -1,6 +1,6 @@
 package com.jintakkim.postevaluator.evaluation;
 
-import com.jintakkim.postevaluator.core.RecommendAlgorithm;
+import com.jintakkim.postevaluator.RecommendAlgorithm;
 
 /**
  * 게시글을 평가하는 평가기

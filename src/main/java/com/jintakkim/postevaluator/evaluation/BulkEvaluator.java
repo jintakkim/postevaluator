@@ -1,6 +1,6 @@
 package com.jintakkim.postevaluator.evaluation;
 
-import com.jintakkim.postevaluator.core.RecommendAlgorithm;
+import com.jintakkim.postevaluator.RecommendAlgorithm;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;

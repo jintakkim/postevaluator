@@ -1,7 +1,7 @@
 package com.jintakkim.postevaluator.gemini;
 
 import com.google.genai.types.Type;
-import com.jintakkim.postevaluator.core.FeatureType;
+import com.jintakkim.postevaluator.FeatureType;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 

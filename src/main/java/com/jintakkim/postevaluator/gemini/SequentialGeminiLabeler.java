@@ -2,8 +2,8 @@ package com.jintakkim.postevaluator.gemini;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.genai.Client;
-import com.jintakkim.postevaluator.core.*;
-import com.jintakkim.postevaluator.core.labeling.Labeler;
+import com.jintakkim.postevaluator.*;
+import com.jintakkim.postevaluator.labeling.Labeler;
 
 import java.util.List;
 

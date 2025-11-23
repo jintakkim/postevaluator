@@ -1,7 +1,7 @@
 package com.jintakkim.postevaluator.evaluation;
 
-import com.jintakkim.postevaluator.core.LabeledSample;
-import com.jintakkim.postevaluator.core.RecommendAlgorithm;
+import com.jintakkim.postevaluator.LabeledSample;
+import com.jintakkim.postevaluator.RecommendAlgorithm;
 import com.jintakkim.postevaluator.evaluation.metric.AlgorithmMetric;
 import com.jintakkim.postevaluator.evaluation.metric.MetricResult;
 

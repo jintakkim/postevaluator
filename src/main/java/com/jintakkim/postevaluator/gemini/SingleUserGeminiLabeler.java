@@ -8,9 +8,9 @@ import com.google.genai.types.GenerateContentConfig;
 import com.google.genai.types.GenerateContentResponse;
 import com.google.genai.types.Schema;
 import com.google.genai.types.Type;
-import com.jintakkim.postevaluator.core.*;
-import com.jintakkim.postevaluator.core.labeling.LabelPrompt;
-import com.jintakkim.postevaluator.core.labeling.Labeler;
+import com.jintakkim.postevaluator.*;
+import com.jintakkim.postevaluator.labeling.LabelPrompt;
+import com.jintakkim.postevaluator.labeling.Labeler;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;

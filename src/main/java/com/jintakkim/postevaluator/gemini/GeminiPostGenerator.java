@@ -7,10 +7,10 @@ import com.google.genai.Client;
 import com.google.genai.types.GenerateContentResponse;
 import com.google.genai.types.Schema;
 import com.google.genai.types.Type;
-import com.jintakkim.postevaluator.core.Post;
-import com.jintakkim.postevaluator.core.PostDefinition;
-import com.jintakkim.postevaluator.core.feature.FeatureDefinition;
-import com.jintakkim.postevaluator.core.PostGenerator;
+import com.jintakkim.postevaluator.Post;
+import com.jintakkim.postevaluator.PostDefinition;
+import com.jintakkim.postevaluator.feature.FeatureDefinition;
+import com.jintakkim.postevaluator.PostGenerator;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;

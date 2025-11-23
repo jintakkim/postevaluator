@@ -1,6 +1,6 @@
 package com.jintakkim.postevaluator.config.properties;
 
-import com.jintakkim.postevaluator.core.SetupStrategy;
+import com.jintakkim.postevaluator.SetupStrategy;
 
 public record DatasetProperties(
         int datasetSize,
