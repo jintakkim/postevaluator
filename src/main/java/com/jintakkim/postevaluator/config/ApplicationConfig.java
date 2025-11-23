@@ -28,14 +28,7 @@ public class ApplicationConfig {
         this.generatorConfig = new GeneratorConfig(definitionProperties, geminiConfig, objectMapper);
         this.labelerConfig = new LabelerConfig(featureConfig.featureRegistry, geminiConfig, objectMapper);
         this.algorithmMetricConfig = algorithmMetricConfig;
-        this.datasetManager = new DatasetManager(
-                datasetConfig.targetDatasetSize,
-                datasetConfig.setupStrategy,
-                dbConfig.postRepository,
-                dbConfig.labelRepository,
-                generatorConfig.postGenerator,
-                labelerConfig.labeler
-        );
+      
         datasetManager.initializeDataset();
         this.evaluatorConfig = new EvaluatorConfig(algorithmMetricConfig.algorithmMetric, datasetManager);
     }

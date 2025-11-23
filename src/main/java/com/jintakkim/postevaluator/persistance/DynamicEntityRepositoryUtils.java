@@ -4,7 +4,6 @@ import com.jintakkim.postevaluator.DynamicEntity;
 import com.jintakkim.postevaluator.EntitySchema;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.statement.PreparedBatch;
 import org.jdbi.v3.core.statement.Update;
 
@@ -14,10 +13,10 @@ import java.util.Map;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class DynamicEntityRepositoryUtils {
 
-    public static <T extends DynamicEntity> Long save(Jdbi jdbi, String tableName, EntitySchema entitySchema, T entity) {
+    public static <T extends DynamicEntity> Long save(JdbiContext jdbiContext, String tableName, EntitySchema entitySchema, T entity) {
         Map<String, String> fieldToColumnMap = entitySchema.getFieldToColumnMap();
         String sql = DynamicSqlGenerateUtils.generateInsert(tableName, fieldToColumnMap.values());
-        return jdbi.withHandle(handle -> {
+        return jdbiContext.withHandle(handle -> {
             Update updateStatement = handle.createUpdate(sql);
             bindEntityParameters(updateStatement, entity, fieldToColumnMap);
             return updateStatement.executeAndReturnGeneratedKeys("id")
@@ -26,10 +25,10 @@ public final class DynamicEntityRepositoryUtils {
         });
     }
 
-    public static <T extends DynamicEntity> void batchSave(Jdbi jdbi, String tableName, EntitySchema entitySchema, Collection<T> entities) {
+    public static <T extends DynamicEntity> void batchSave(JdbiContext jdbiContext, String tableName, EntitySchema entitySchema, Collection<T> entities) {
         Map<String, String> fieldToColumnMap = entitySchema.getFieldToColumnMap();
         String sql = DynamicSqlGenerateUtils.generateInsert(tableName, fieldToColumnMap.values());
-        jdbi.useTransaction(handle -> {
+        jdbiContext.useHandle(handle -> {
             PreparedBatch batch = handle.prepareBatch(sql);
             for(T entity: entities) {
                 bindBatchParameters(batch, entity, fieldToColumnMap);

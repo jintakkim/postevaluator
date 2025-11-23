@@ -2,7 +2,6 @@ package com.jintakkim.postevaluator.persistance;
 
 import com.jintakkim.postevaluator.*;
 import lombok.RequiredArgsConstructor;
-import org.jdbi.v3.core.Jdbi;
 
 import java.util.List;
 
@@ -10,12 +9,12 @@ import java.util.List;
 public class JdbiSampleRepository implements SampleRepository {
     private final EntitySchema userSchema;
     private final EntitySchema postSchema;
-    private final Jdbi jdbi;
+    private final JdbiContext jdbiContext;
 
     @Override
     public List<LabeledSample> findLabeledSamples(int offset, int limit) {
         String sql = buildLabeledSelectSql(true);
-        return jdbi.withHandle(handle ->
+        return jdbiContext.withHandle(handle ->
                 handle.createQuery(sql)
                         .bind("limit", limit)
                         .bind("offset", offset)
@@ -27,7 +26,7 @@ public class JdbiSampleRepository implements SampleRepository {
     @Override
     public List<LabeledSample> findLabeledSamples() {
         String sql = buildLabeledSelectSql(false);
-        return jdbi.withHandle(handle ->
+        return jdbiContext.withHandle(handle ->
                 handle.createQuery(sql)
                         .mapTo(LabeledSample.class)
                         .list()
@@ -37,7 +36,7 @@ public class JdbiSampleRepository implements SampleRepository {
     @Override
     public List<UnlabeledSample> findUnlabeledSamples(int offset, int limit) {
         String sql = buildUnlabeledSelectSql(true);
-        return jdbi.withHandle(handle ->
+        return jdbiContext.withHandle(handle ->
                 handle.createQuery(sql)
                         .bind("limit", limit)
                         .bind("offset", offset)
@@ -49,7 +48,7 @@ public class JdbiSampleRepository implements SampleRepository {
     @Override
     public List<UnlabeledSample> findUnlabeledSamples() {
         String sql = buildUnlabeledSelectSql(false);
-        return jdbi.withHandle(handle ->
+        return jdbiContext.withHandle(handle ->
                 handle.createQuery(sql)
                         .mapTo(UnlabeledSample.class)
                         .list()

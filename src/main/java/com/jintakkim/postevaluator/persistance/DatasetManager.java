@@ -15,7 +15,7 @@ public class DatasetManager implements LabeledSampleProvider {
     private static final int MAX_DATASET_SIZE = 500;
     private static final int MIN_DATASET_SIZE = 10;
 
-    private final Jdbi jdbi;
+    private final JdbiContext jdbiContext;
     private final int targetDatasetSize;
     private final SetupStrategy setupStrategy;
     private final PostRepository postRepository;
@@ -29,7 +29,7 @@ public class DatasetManager implements LabeledSampleProvider {
     private final AtomicInteger currentOffset = new AtomicInteger(0);
 
     public DatasetManager(
-            Jdbi jdbi,
+            JdbiContext jdbiContext,
             int targetDatasetSize,
             SetupStrategy setupStrategy,
             PostRepository postRepository,
@@ -40,7 +40,7 @@ public class DatasetManager implements LabeledSampleProvider {
             PostGenerator postGenerator,
             Labeler labeler
     ) {
-        this.jdbi = jdbi;
+        this.jdbiContext = jdbiContext;
         this.targetDatasetSize = targetDatasetSize;
         validateDatasetSize();
         this.setupStrategy = setupStrategy;
@@ -75,7 +75,7 @@ public class DatasetManager implements LabeledSampleProvider {
     }
 
     private void deleteAll() {
-        jdbi.useTransaction(handle -> {
+        jdbiContext.useHandle(_ -> {
             postRepository.deleteAll();
             userRepository.deleteAll();
             labelRepository.deleteAll();
@@ -118,11 +118,9 @@ public class DatasetManager implements LabeledSampleProvider {
 
     private void doLabeling() {
         List<UnlabeledSample> unlabeledSamples = sampleRepository.findUnlabeledSamples();
-        if(unlabeledUserIds.isEmpty()) return;
-        log.info("레이블링되지 않은 {}개의 데이터를 레이블링 합니다.", unlabeledUserIds.size());
-        List<User> unlabeledUsers = userRepository.findByIdIn(unlabeledUserIds);
-        List<Post> posts = postRepository.findAll();
-        labelRepository.saveAll(labeler.label(unlabeledUsers, posts));
+        if(unlabeledSamples.isEmpty()) return;
+        log.info("레이블링되지 않은 {}개의 데이터를 레이블링 합니다.", unlabeledSamples.size());
+        labelRepository.saveAll(labeler.label(unlabeledSamples));
     }
 
     private void validateDatasetSize() {

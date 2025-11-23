@@ -1,8 +1,8 @@
 package com.jintakkim.postevaluator.persistance.initialization;
 
+import com.jintakkim.postevaluator.persistance.JdbiContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jdbi.v3.core.Jdbi;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -19,7 +19,7 @@ public class LabelDatabaseInitializer {
                 FOREIGN KEY(user_id) REFERENCES user(id) ON DELETE CASCADE
             );
             """;
-    private final Jdbi jdbi;
+    private final JdbiContext jdbiContext;
 
     public InitStatus initialize(InitStatus postInitStatus, InitStatus userInitStatus) {
         if(!isTableExists()) {
@@ -37,7 +37,7 @@ public class LabelDatabaseInitializer {
     }
 
     private boolean isTableExists() {
-        return jdbi.withHandle(handle ->
+        return jdbiContext.withHandle(handle ->
                 handle.createQuery("SELECT 1 FROM sqlite_master WHERE type='table' AND name = :tableName")
                 .bind("tableName", "label")
                 .mapTo(Integer.class)
@@ -46,7 +46,7 @@ public class LabelDatabaseInitializer {
     }
 
     private void createTable() {
-        jdbi.useHandle(handle -> handle.execute(LABEL_TABLE_CREATION_SQL));
+        jdbiContext.useHandle(handle -> handle.execute(LABEL_TABLE_CREATION_SQL));
     }
 
     private boolean hasChanged(InitStatus postInitStatus, InitStatus userInitStatus) {
@@ -54,7 +54,7 @@ public class LabelDatabaseInitializer {
     }
 
     private void deleteAll() {
-        jdbi.useHandle(handle -> handle.execute("delete from label"));
+        jdbiContext.useHandle(handle -> handle.execute("delete from label"));
         log.debug("라벨링 정보들을 전부 삭제 했습니다.");
     }
 }

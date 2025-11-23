@@ -2,10 +2,10 @@ package com.jintakkim.postevaluator.persistance.initialization;
 
 import com.jintakkim.postevaluator.EntitySchema;
 import com.jintakkim.postevaluator.persistance.DynamicSqlGenerateUtils;
+import com.jintakkim.postevaluator.persistance.JdbiContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.Handle;
-import org.jdbi.v3.core.Jdbi;
 
 import java.util.Optional;
 
@@ -16,7 +16,7 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 public class TableDefinitionHashDatabaseInitializer {
-    private final Jdbi jdbi;
+    private final JdbiContext jdbiContext;
     private final String tableName;
     private final EntitySchema entitySchema;
 
@@ -54,7 +54,7 @@ public class TableDefinitionHashDatabaseInitializer {
     }
 
     private void recreateTable(String currentHash) {
-        jdbi.useTransaction(handle -> {
+        jdbiContext.useHandle(handle -> {
             dropTable(handle);
             createTable(handle);
             updateTableHash(currentHash);
@@ -71,7 +71,7 @@ public class TableDefinitionHashDatabaseInitializer {
 
     private Optional<String> findSavedHash(String tableName) {
         createMetadataTableIfNotExists();
-        return jdbi.withHandle(handle ->
+        return jdbiContext.withHandle(handle ->
                 handle.createQuery("SELECT table_definition_hash FROM table_metadata WHERE table_name = :name")
                     .bind("name", tableName)
                     .mapTo(String.class)
@@ -89,7 +89,7 @@ public class TableDefinitionHashDatabaseInitializer {
     }
 
     private void createMetadataTableIfNotExists() {
-        jdbi.useHandle(handle ->
+        jdbiContext.useHandle(handle ->
                 handle.execute("""
                         CREATE TABLE IF NOT EXISTS table_metadata
                             (table_name TEXT PRIMARY KEY, table_definition_hash TEXT NOT NULL)
@@ -98,7 +98,7 @@ public class TableDefinitionHashDatabaseInitializer {
     }
 
     private void updateTableHash(String newHash) {
-        jdbi.useHandle(handle ->
+        jdbiContext.useHandle(handle ->
                 handle.createUpdate("INSERT OR REPLACE INTO table_metadata (table_name, table_definition_hash) VALUES (:name, :hash)")
                         .bind("name", tableName)
                         .bind("hash", newHash)

@@ -1,12 +1,13 @@
 package com.jintakkim.postevaluator.persistance;
 
 import com.jintakkim.postevaluator.Label;
-import org.jdbi.v3.core.Jdbi;
+import lombok.RequiredArgsConstructor;
 import org.jdbi.v3.core.statement.PreparedBatch;
 
 import java.util.Collection;
 import java.util.List;
 
+@RequiredArgsConstructor
 public class JdbiLabelRepository implements LabelRepository {
     private static final String INSERT_SQL = """
             INSERT INTO label
@@ -14,15 +15,12 @@ public class JdbiLabelRepository implements LabelRepository {
             VALUES
                 (:postId, :userId, :score, :reasoning)
             """;
-    private final Jdbi jdbi;
 
-    public JdbiLabelRepository(Jdbi jdbi) {
-        this.jdbi = jdbi;
-    }
+    private final JdbiContext jdbiContext;
 
     @Override
     public Label save(Label post) {
-        long id = jdbi.withHandle(handle ->
+        long id = jdbiContext.withHandle(handle ->
                 handle.createUpdate(INSERT_SQL)
                         .bind("postId", post.postId())
                         .bind("userId", post.userId())
@@ -43,7 +41,7 @@ public class JdbiLabelRepository implements LabelRepository {
 
     @Override
     public void saveAll(Collection<Label> labels) {
-        jdbi.useTransaction(handle -> {
+        jdbiContext.useHandle(handle -> {
             PreparedBatch batch = handle.prepareBatch(INSERT_SQL);
             for (Label label : labels) {
                 batch.bind("postId", label.postId())
@@ -78,33 +76,18 @@ public class JdbiLabelRepository implements LabelRepository {
     @Override
     public List<Label> findAll() {
         String sql = "SELECT * FROM label";
-        return jdbi.withHandle(handle ->
+        return jdbiContext.withHandle(handle ->
                 handle.createQuery(sql)
                         .mapTo(Label.class)
                         .list()
         );
     }
 
-//    @Override
-//    public List<Label> findRandomly(int count) {
-//        String sql = """
-//                    SELECT id, post_id, user_id, score, reasoning
-//                    FROM label
-//                    ORDER BY RANDOM()
-//                    LIMIT :count
-//                    """;
-//        return jdbi.withHandle(handle ->
-//                handle.createQuery(sql)
-//                        .bind("count", count)
-//                        .mapTo(Label.class)
-//                        .list()
-//        );
-//    }
 
     @Override
     public void deleteAll() {
         String sql = "DELETE FROM label";
-        jdbi.useHandle(handle ->
+        jdbiContext.useHandle(handle ->
                 handle.createUpdate(sql)
                         .execute()
         );
@@ -113,7 +96,7 @@ public class JdbiLabelRepository implements LabelRepository {
     @Override
     public int count() {
         String sql = "SELECT COUNT(*) FROM label";
-        return jdbi.withHandle(handle ->
+        return jdbiContext.withHandle(handle ->
                 handle.createQuery(sql)
                         .mapTo(Integer.class)
                         .one()

@@ -4,31 +4,30 @@ import com.jintakkim.postevaluator.EntitySchema;
 import com.jintakkim.postevaluator.Post;
 
 import lombok.RequiredArgsConstructor;
-import org.jdbi.v3.core.Jdbi;
 
 import java.util.Collection;
 import java.util.List;
 
 @RequiredArgsConstructor
 public class JdbiPostRepository implements PostRepository {
-    private final Jdbi jdbi;
+    private final JdbiContext jdbiContext;
     private final EntitySchema postSchema;
 
     @Override
     public Post save(Post post) {
-        Long generatedId = DynamicEntityRepositoryUtils.save(jdbi, Post.name, postSchema, post);
+        Long generatedId = DynamicEntityRepositoryUtils.save(jdbiContext, Post.name, postSchema, post);
         return new Post(generatedId, post.features());
     }
 
     @Override
     public void saveAll(Collection<Post> posts) {
-        DynamicEntityRepositoryUtils.batchSave(jdbi, Post.name, postSchema, posts);
+        DynamicEntityRepositoryUtils.batchSave(jdbiContext, Post.name, postSchema, posts);
     }
 
     @Override
     public List<Post> findAll() {
         String sql = "SELECT * FROM post";
-        return jdbi.withHandle(handle ->
+        return jdbiContext.withHandle(handle ->
                 handle.createQuery(sql)
                         .mapTo(Post.class)
                         .list()
@@ -50,7 +49,7 @@ public class JdbiPostRepository implements PostRepository {
     @Override
     public int count() {
         String sql = "SELECT COUNT(*) FROM post";
-        return jdbi.withHandle(handle ->
+        return jdbiContext.withHandle(handle ->
                 handle.createQuery(sql)
                         .mapTo(Integer.class)
                         .one()
@@ -60,7 +59,7 @@ public class JdbiPostRepository implements PostRepository {
     @Override
     public void deleteAll() {
         String sql = "DELETE FROM post";
-        jdbi.useHandle(handle ->
+        jdbiContext.useHandle(handle ->
                 handle.createUpdate(sql)
                         .execute()
         );

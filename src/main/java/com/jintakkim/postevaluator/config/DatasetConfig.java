@@ -19,12 +19,13 @@ public class DatasetConfig {
             Labeler labeler
     ) {
         this.datasetManager = new DatasetManager(
-                dbConfig.jdbi,
+                dbConfig.jdbiContext,
                 datasetProperties.datasetSize(),
                 datasetProperties.setupStrategy(),
                 dbConfig.postRepository,
                 dbConfig.userRepository,
                 dbConfig.labelRepository,
+                dbConfig.sampleRepository,
                 userGenerator,
                 postGenerator,
                 labeler
