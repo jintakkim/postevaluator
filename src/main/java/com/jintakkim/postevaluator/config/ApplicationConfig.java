@@ -18,7 +18,7 @@ public class ApplicationConfig {
     private final AlgorithmMetricConfig algorithmMetricConfig;
     public final EvaluatorConfig evaluatorConfig;
 
-    private ApplicationConfig(
+    public ApplicationConfig(
             DefinitionProperties definitionProperties,
             DatasetProperties datasetProperties,
             AlgorithmMetricProperties algorithmMetricProperties

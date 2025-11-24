@@ -7,11 +7,7 @@ import com.jintakkim.postevaluator.search.GridSearcher;
 import com.jintakkim.postevaluator.search.ParametricRecommendAlgorithm;
 import com.jintakkim.postevaluator.search.SearchResult;
 import com.jintakkim.postevaluator.search.param.CombinationProvider;
-import lombok.extern.slf4j.Slf4j;
 
-import java.util.List;
-
-@Slf4j
 public class PostRecommendTest {
     private final ApplicationConfig appConfig;
 
@@ -21,12 +17,8 @@ public class PostRecommendTest {
         this.appConfig = appConfig;
     }
 
-    public EvaluateResult test(RecommendAlgorithm recommendAlgorithm) {
+    public EvaluateResult simpleTest(RecommendAlgorithm recommendAlgorithm) {
         return appConfig.evaluatorConfig.evaluator.evaluate(recommendAlgorithm);
-    }
-
-    public List<EvaluateResult> bulkTest(List<RecommendAlgorithm> recommendAlgorithms) {
-        return appConfig.evaluatorConfig.bulkEvaluator.evaluate(recommendAlgorithms);
     }
 
     public SearchResult gridSearchTest(
