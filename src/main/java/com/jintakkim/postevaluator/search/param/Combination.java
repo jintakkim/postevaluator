@@ -1,8 +1,10 @@
 package com.jintakkim.postevaluator.search.param;
 
+import com.jintakkim.postevaluator.search.CombinationAccessor;
+
 import java.util.*;
 
-public class Combination {
+public class Combination implements CombinationAccessor {
     private final Map<String, HyperParameter> parameters;
 
     public Combination(Map<String, HyperParameter> parameters) {
@@ -17,6 +19,7 @@ public class Combination {
         parameters.put(parameter.name(), parameter);
     }
 
+    @Override
     public HyperParameter get(String paramName) {
         return findByNameElseThrow(paramName);
     }
