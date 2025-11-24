@@ -6,8 +6,6 @@ import com.jintakkim.postevaluator.config.properties.AlgorithmMetricProperties;
 import com.jintakkim.postevaluator.config.properties.DatasetProperties;
 import com.jintakkim.postevaluator.config.properties.DefinitionProperties;
 import com.jintakkim.postevaluator.persistance.LocalFileDbIntegrationTest;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 
 public class ApplicationIntegrationTest extends LocalFileDbIntegrationTest {
     static ApplicationConfig applicationConfig = new ApplicationConfig(
@@ -19,10 +17,4 @@ public class ApplicationIntegrationTest extends LocalFileDbIntegrationTest {
             new AlgorithmMetricProperties(AlgorithmMetricProperties.BuiltIn.MEAN_SQUARED_ERROR)
     );
     protected PostRecommendTest postRecommendTest = new PostRecommendTest(applicationConfig);
-
-    @Test
-    @DisplayName("run")
-    void dd() {
-
-    }
 }

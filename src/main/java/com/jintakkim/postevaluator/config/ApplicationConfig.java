@@ -29,11 +29,13 @@ public class ApplicationConfig {
     ) {
         this.executorConfig = new ExecutorConfig();
         this.dbConfig = new DbConfig(definitionProperties);
+        dbConfig.initialize();
         this.geminiConfig = new GeminiConfig();
         this.objectMapper = new ObjectMapper();
         this.generatorConfig = new GeneratorConfig(definitionProperties, geminiConfig, objectMapper, executorConfig);
-        this.labelerConfig = new LabelerConfig(definitionProperties, geminiConfig, objectMapper);
+        this.labelerConfig = new LabelerConfig(definitionProperties, geminiConfig, objectMapper, executorConfig);
         this.datasetConfig = new DatasetConfig(datasetProperties, dbConfig, generatorConfig, labelerConfig);
+        datasetConfig.datasetManager.initializeDataset();
         this.algorithmMetricConfig = new AlgorithmMetricConfig(algorithmMetricProperties);
         this.evaluatorConfig = new EvaluatorConfig(algorithmMetricConfig, datasetConfig);
         this.searchConfig = new SearchConfig(searchProperties, evaluatorConfig);

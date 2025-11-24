@@ -2,6 +2,7 @@ package com.jintakkim.postevaluator.gemini;
 
 import com.google.genai.Client;
 import com.google.genai.types.*;
+import com.jintakkim.postevaluator.BatchCallback;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;

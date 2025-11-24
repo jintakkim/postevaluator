@@ -72,7 +72,7 @@ public class TableDefinitionHashDatabaseInitializer {
     private Optional<String> findSavedHash(String tableName) {
         createMetadataTableIfNotExists();
         return jdbiContext.withHandle(handle ->
-                handle.createQuery("SELECT table_definition_hash FROM table_metadata WHERE table_name = :name")
+                handle.createQuery("SELECT table_hash FROM table_metadata WHERE table_name = :name")
                     .bind("name", tableName)
                     .mapTo(String.class)
                     .findFirst()
@@ -92,14 +92,14 @@ public class TableDefinitionHashDatabaseInitializer {
         jdbiContext.useHandle(handle ->
                 handle.execute("""
                         CREATE TABLE IF NOT EXISTS table_metadata
-                            (table_name TEXT PRIMARY KEY, table_definition_hash TEXT NOT NULL)
+                            (table_name TEXT PRIMARY KEY, table_hash TEXT NOT NULL)
                         """)
         );
     }
 
     private void updateTableHash(String newHash) {
         jdbiContext.useHandle(handle ->
-                handle.createUpdate("INSERT OR REPLACE INTO table_metadata (table_name, table_definition_hash) VALUES (:name, :hash)")
+                handle.createUpdate("INSERT OR REPLACE INTO table_metadata (table_name, table_hash) VALUES (:name, :hash)")
                         .bind("name", tableName)
                         .bind("hash", newHash)
                         .execute()

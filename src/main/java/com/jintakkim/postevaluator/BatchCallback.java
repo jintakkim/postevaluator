@@ -1,4 +1,4 @@
-package com.jintakkim.postevaluator.gemini;
+package com.jintakkim.postevaluator;
 
 import java.util.List;
 

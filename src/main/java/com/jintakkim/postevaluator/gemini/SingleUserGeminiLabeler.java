@@ -40,7 +40,7 @@ abstract class SingleUserGeminiLabeler {
 
     }
 
-    public List<Label> label(User user, List<Post> posts) {
+    public void label(User user, List<Post> posts, BatchCallback<Label> callback) {
         String content = LabelPrompt.generateContent(
                 userDefinition.labelingCriteria(),
                 user,
@@ -54,7 +54,10 @@ abstract class SingleUserGeminiLabeler {
         );
         List<SingleUserLabelResponseDto> labelDtos = parseResponse(response);
         validateSizeMatch(labelDtos, posts.size());
-        return labelDtos.stream().map(labelDto -> convertLabelDtoToLabel(labelDto, user.id())).toList();
+        List<Label> labels = labelDtos.stream()
+                .map(labelDto -> convertLabelDtoToLabel(labelDto, user.id()))
+                .toList();
+        callback.call(labels);
     }
 
     public String getModelName() {

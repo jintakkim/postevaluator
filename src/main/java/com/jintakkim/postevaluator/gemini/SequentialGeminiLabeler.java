@@ -18,19 +18,15 @@ public class SequentialGeminiLabeler extends SingleUserGeminiLabeler implements 
     }
 
     @Override
-    public List<Label> label(List<UnlabeledSample> unlabeledSamples) {
-        Map<User, List<UnlabeledSample>> samplesByUser = unlabeledSamples.stream()
-                .collect(Collectors.groupingBy(UnlabeledSample::user));
+    public void label(List<UnlabeledSample> unlabeledSamples, BatchCallback<Label> callback) {
+        Map<User, List<Post>> samplesByUser = samplesByUser(unlabeledSamples);
+        samplesByUser.forEach((user, posts) -> super.label(user, posts, callback));
+    }
 
-        return samplesByUser.entrySet().stream()
-                .map(entry -> {
-                    User user = entry.getKey();
-                    List<Post> posts = entry.getValue().stream()
-                            .map(UnlabeledSample::post)
-                            .toList();
-                    return super.label(user, posts);
-                })
-                .flatMap(List::stream)
-                .toList();
+    private Map<User, List<Post>> samplesByUser(List<UnlabeledSample> unlabeledSamples) {
+        return unlabeledSamples.stream().collect(Collectors.groupingBy(UnlabeledSample::user, Collectors.mapping(
+                UnlabeledSample::post,
+                Collectors.toList()
+        )));
     }
 }

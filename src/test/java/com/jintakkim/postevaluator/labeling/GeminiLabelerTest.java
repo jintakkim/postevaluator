@@ -36,7 +36,7 @@ public class GeminiLabelerTest {
         );
         Labeler labeler = createLabelerWithMockResponse(invalidResponse);
         Assertions.assertThatThrownBy(() ->
-                labeler.label(List.of(new UnlabeledSample(USER, POST_1)))
+                labeler.label(List.of(new UnlabeledSample(USER, POST_1)), (_) -> {})
         ).isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -48,7 +48,7 @@ public class GeminiLabelerTest {
         );
         Labeler labeler = createLabelerWithMockResponse(missingFieldResponse);
         Assertions.assertThatThrownBy(() ->
-                labeler.label(List.of(new UnlabeledSample(USER, POST_1)))
+                labeler.label(List.of(new UnlabeledSample(USER, POST_1)), (_) -> {})
         ).isInstanceOf(IllegalStateException.class);
     }
 
@@ -63,7 +63,7 @@ public class GeminiLabelerTest {
                 labeler.label(List.of(
                         new UnlabeledSample(USER, POST_1),
                         new UnlabeledSample(USER, POST_2)
-                ))
+                ), (_) -> {})
         ).isInstanceOf(IllegalStateException.class);
     }
 
