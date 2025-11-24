@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class PostGeneratorTest {
+public class GeminiPostGeneratorTest {
     static final ObjectMapper objectMapper = new ObjectMapper();
     static final List<Map<String, Object>> SOURCE_FEATURES = List.of(
             Map.of("commentCount", 100, "content", "Test Content A"),

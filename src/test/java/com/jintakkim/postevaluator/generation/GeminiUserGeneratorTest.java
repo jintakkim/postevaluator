@@ -4,9 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.genai.Client;
 import com.google.genai.types.GenerateContentResponse;
-import com.jintakkim.postevaluator.Post;
 import com.jintakkim.postevaluator.User;
-import com.jintakkim.postevaluator.gemini.GeminiPostGenerator;
 import com.jintakkim.postevaluator.gemini.GeminiUserGenerator;
 import com.jintakkim.postevaluator.test.MockGeminiClientBuilder;
 import com.jintakkim.postevaluator.test.MockGeminiContentResponseBuilder;
@@ -19,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class UserGeneratorTest {
+public class GeminiUserGeneratorTest {
     static final ObjectMapper objectMapper = new ObjectMapper();
     static final List<Map<String, Object>> SOURCE_FEATURES = List.of(
             Map.of("dislikeTopic", "coding", "likeTopic", "gaming"),

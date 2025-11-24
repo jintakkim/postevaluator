@@ -20,23 +20,23 @@ import java.util.Map;
 @Slf4j
 @Execution(ExecutionMode.SAME_THREAD) //기본값이지만 db 데이터에 의해 테스트간 격리가 깨질 수 있으므로 명시
 public abstract class LocalFileDbIntegrationTest {
-    static final UserDefinition USED_USER_DEFINITION =  DefinitionFixture.USER_DEFINITION_1;
-    static final PostDefinition USED_POST_DEFINITION =  DefinitionFixture.POST_DEFINITION_1;
-    static final Map<String, Object> USED_USER_FEATURES = Map.of(
+    protected static final UserDefinition USED_USER_DEFINITION =  DefinitionFixture.USER_DEFINITION_1;
+    protected static final PostDefinition USED_POST_DEFINITION =  DefinitionFixture.POST_DEFINITION_1;
+    protected static final Map<String, Object> USED_USER_FEATURES = Map.of(
             FeatureDefinitionFixture.User.DISLIKE_TOPIC.name(), "study, coding",
             FeatureDefinitionFixture.User.LIKE_TOPIC.name(), "gaming"
     );
-    static final Map<String, Object> USED_POST_FEATURES = Map.of(
+    protected static final Map<String, Object> USED_POST_FEATURES = Map.of(
             FeatureDefinitionFixture.Post.COMMENT_COUNT.name(), 100,
             FeatureDefinitionFixture.Post.CONTENT.name(), "아무 의미 없는 글"
     );
 
     static DbConfig dbConfig;
-    static UserRepository userRepository;
-    static PostRepository postRepository;
-    static LabelRepository labelRepository;
-    static SampleRepository sampleRepository;
-    static JdbiContext jdbiContext;
+    protected static UserRepository userRepository;
+    protected static PostRepository postRepository;
+    protected static LabelRepository labelRepository;
+    protected static SampleRepository sampleRepository;
+    protected static JdbiContext jdbiContext;
 
     @BeforeAll
     static void initialize() {
@@ -56,7 +56,7 @@ public abstract class LocalFileDbIntegrationTest {
         dropAllTables();
     }
 
-    static void rollbackTest(Executable executable) {
+    protected static void rollbackTest(Executable executable) {
         jdbiContext.useTransaction(handle -> {
             executable.execute(jdbiContext);
             handle.rollback();
