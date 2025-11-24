@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class ApplicationConfig {
+    public final ExecutorConfig executorConfig;
     public final DbConfig dbConfig;
     public final DatasetConfig datasetConfig;
     public final GeminiConfig geminiConfig;
@@ -26,10 +27,11 @@ public class ApplicationConfig {
             AlgorithmMetricProperties algorithmMetricProperties,
             SearchProperties searchProperties
     ) {
+        this.executorConfig = new ExecutorConfig();
         this.dbConfig = new DbConfig(definitionProperties);
         this.geminiConfig = new GeminiConfig();
         this.objectMapper = new ObjectMapper();
-        this.generatorConfig = new GeneratorConfig(definitionProperties, geminiConfig, objectMapper);
+        this.generatorConfig = new GeneratorConfig(definitionProperties, geminiConfig, objectMapper, executorConfig);
         this.labelerConfig = new LabelerConfig(definitionProperties, geminiConfig, objectMapper);
         this.datasetConfig = new DatasetConfig(datasetProperties, dbConfig, generatorConfig, labelerConfig);
         this.algorithmMetricConfig = new AlgorithmMetricConfig(algorithmMetricProperties);

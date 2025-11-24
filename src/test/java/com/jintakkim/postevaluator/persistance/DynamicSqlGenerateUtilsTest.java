@@ -50,7 +50,7 @@ public class DynamicSqlGenerateUtilsTest {
     void shouldGenerateInsertSqlWithNamedParameters() {
         String insertSql = DynamicSqlGenerateUtils.generateInsert("test", List.of("column_a", "column_b"));
         Assertions.assertThat(insertSql)
-                .isEqualTo("INSERT INTO test (column_a, column_b) VALUES (column_a:column_a, column_b:column_b)");
+                .isEqualTo("INSERT INTO test (column_a, column_b) VALUES (:column_a, :column_b)");
     }
 
     @Test

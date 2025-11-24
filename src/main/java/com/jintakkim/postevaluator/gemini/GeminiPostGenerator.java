@@ -17,19 +17,21 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 
 @Slf4j
-public class GeminiPostGenerator extends AbstractGeminiGenerator<Post> implements PostGenerator {
+public class GeminiPostGenerator extends AbstractBatchGeminiGenerator<Post> implements PostGenerator {
     private final ObjectMapper objectMapper;
     private final PostDefinition postDefinition;
 
     public GeminiPostGenerator(
             Client client,
             ObjectMapper objectMapper,
-            PostDefinition postDefinition
+            PostDefinition postDefinition,
+            ExecutorService executorService
             ) {
-        super(client, Post.name, composeGenerateContentConfig(postDefinition));
+        super(client, Post.name, composeGenerateContentConfig(postDefinition), executorService);
         this.objectMapper = objectMapper;
         this.postDefinition = postDefinition;
     }

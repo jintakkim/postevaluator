@@ -13,6 +13,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -29,12 +30,18 @@ public class GeminiUserGeneratorTest {
             .expectedModelName("gemini-2.0-flash")
             .expectedContent(String.format("스키마를 반영해서 게시글 추천 테스트에 쓸 %s 데이터 셋 %d개를 만들어줘", User.name, size))
             .build();
-    static final UserGenerator userGenerator = new GeminiUserGenerator(client, objectMapper, DefinitionFixture.USER_DEFINITION_1);
+    static final UserGenerator userGenerator = new GeminiUserGenerator(
+            client,
+            objectMapper,
+            DefinitionFixture.USER_DEFINITION_1,
+            null //작은 데이터는 병렬 작동안함
+    );
 
     @Test
     @DisplayName("생성할려는 데이터 사이즈 만큼의 응답이 와야한다")
     void shouldGenerateExactSameNumberOfUsersRequested() {
-        List<User> generatedUsers = userGenerator.generate(size);
+        List<User> generatedUsers = new ArrayList<>();
+        userGenerator.generate(size, generatedUsers::addAll);
         Assertions.assertThat(generatedUsers)
                 .hasSize(size)
                 .extracting(User::features)

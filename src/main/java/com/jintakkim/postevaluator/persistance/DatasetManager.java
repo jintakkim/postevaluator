@@ -116,13 +116,13 @@ public class DatasetManager implements LabeledSampleProvider {
     private void generateAndSaveUsers(int count) {
         if (count <= 0) return;
         log.info("유저: {}개의 데이터를 {} 모델을 통해 생성합니다.", count, postGenerator.getModelName());
-        userRepository.saveAll(userGenerator.generate(count));
+        userGenerator.generate(count, userRepository::saveAll);
     }
 
     private void generateAndSavePosts(int count) {
         if (count <= 0) return;
         log.info("게시글: {}개의 데이터를 {} 모델을 통해 생성합니다.", count, postGenerator.getModelName());
-        postRepository.saveAll(postGenerator.generate(count));
+        postGenerator.generate(count, postRepository::saveAll);
     }
 
     private void doLabeling() {

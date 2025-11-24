@@ -14,6 +14,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -30,12 +31,18 @@ public class GeminiPostGeneratorTest {
             .expectedModelName("gemini-2.0-flash")
             .expectedContent(String.format("스키마를 반영해서 게시글 추천 테스트에 쓸 %s 데이터 셋 %d개를 만들어줘", Post.name, size))
             .build();
-    static final PostGenerator postGenerator = new GeminiPostGenerator(client, objectMapper, DefinitionFixture.POST_DEFINITION_1);
+    static final PostGenerator postGenerator = new GeminiPostGenerator(
+            client,
+            objectMapper,
+            DefinitionFixture.POST_DEFINITION_1,
+            null //작은 데이터는 병렬 작동 안함.
+    );
 
     @Test
     @DisplayName("생성할려는 데이터 사이즈 만큼의 응답이 와야한다")
     void shouldGenerateExactSameNumberOfPostsRequested() {
-        List<Post> generatedPosts = postGenerator.generate(size);
+        List<Post> generatedPosts = new ArrayList<>();
+        postGenerator.generate(size, generatedPosts::addAll);
         Assertions.assertThat(generatedPosts)
                 .hasSize(size)
                 .extracting(Post::features)

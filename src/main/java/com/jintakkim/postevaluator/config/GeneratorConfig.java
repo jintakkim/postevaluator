@@ -15,9 +15,10 @@ public class GeneratorConfig {
     public GeneratorConfig(
             DefinitionProperties definitionProperties,
             GeminiConfig geminiConfig,
-            ObjectMapper objectMapper
+            ObjectMapper objectMapper,
+            ExecutorConfig executorConfig
     ) {
-        this.postGenerator = new GeminiPostGenerator(geminiConfig.client, objectMapper, definitionProperties.postDefinition());
-        this.userGenerator = new GeminiUserGenerator(geminiConfig.client, objectMapper, definitionProperties.userDefinition());
+        this.postGenerator = new GeminiPostGenerator(geminiConfig.client, objectMapper, definitionProperties.postDefinition(), executorConfig.executor);
+        this.userGenerator = new GeminiUserGenerator(geminiConfig.client, objectMapper, definitionProperties.userDefinition(), executorConfig.executor);
     }
 }

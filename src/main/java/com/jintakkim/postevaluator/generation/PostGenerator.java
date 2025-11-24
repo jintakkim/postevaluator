@@ -1,10 +1,9 @@
 package com.jintakkim.postevaluator.generation;
 
 import com.jintakkim.postevaluator.Post;
-
-import java.util.List;
+import com.jintakkim.postevaluator.gemini.BatchCallback;
 
 public interface PostGenerator {
-    List<Post> generate(int size);
+    void generate(int size, BatchCallback<Post> callback);
     String getModelName();
 }

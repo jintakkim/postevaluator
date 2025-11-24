@@ -23,7 +23,7 @@ public class InitializerTest extends LocalFileDbIntegrationTest {
     @Test
     @DisplayName("유저 스키마가 없다면 새로 생성한다.")
     void initializeWhenUserSchemaIsAbsentShouldCreateNewTable() {
-        assertCreateNewTable(() -> new TableDefinitionHashDatabaseInitializer(jdbiContext, "user", DefinitionFixture.USER_DEFINITION_2).initialize());
+        assertCreateNewTable(() -> new TableDefinitionHashDatabaseInitializer(jdbiContext, "user", DefinitionFixture.USER_DEFINITION_1).initialize());
     }
 
     @Test
@@ -34,6 +34,7 @@ public class InitializerTest extends LocalFileDbIntegrationTest {
 
     private void assertCreateNewTable(InitializerRunner initializerRunner) {
         rollbackTest((_) -> {
+            dropAllTables();
             InitStatus initStatus = initializerRunner.run();
             Assertions.assertThat(initStatus).isEqualTo(InitStatus.NOT_EXISTS);
         });
@@ -42,13 +43,13 @@ public class InitializerTest extends LocalFileDbIntegrationTest {
     @Test
     @DisplayName("게시물 스키마가 있지만 게시물의 특징이 변경되었더라면 게시물 스키마를 지우고 다시 생성한다.")
     void initializeWhenPostSchemaHaveChangedShouldRecreateTables() {
-        assertRecreateTable(() -> new TableDefinitionHashDatabaseInitializer(jdbiContext, "post", DefinitionFixture.POST_DEFINITION_1).initialize());
+        assertRecreateTable(() -> new TableDefinitionHashDatabaseInitializer(jdbiContext, "post", DefinitionFixture.POST_DEFINITION_2).initialize());
     }
 
     @Test
     @DisplayName("유저 스키마가 있지만 게시물의 특징이 변경되었더라면 게시물 스키마를 지우고 다시 생성한다.")
     void initializeWhenUserSchemaHaveChangedShouldRecreateTables() {
-        assertRecreateTable(() -> new TableDefinitionHashDatabaseInitializer(jdbiContext, "user", DefinitionFixture.USER_DEFINITION_1).initialize());
+        assertRecreateTable(() -> new TableDefinitionHashDatabaseInitializer(jdbiContext, "user", DefinitionFixture.USER_DEFINITION_2).initialize());
     }
 
     @ParameterizedTest
@@ -88,7 +89,8 @@ public class InitializerTest extends LocalFileDbIntegrationTest {
     @Test
     @DisplayName("게시물 스키마가 변경되지 않았더라면 아무 행동도 하지 않는다.")
     void shouldDoNothingWhenPostSchemaIsUnchanged() {
-        assertDoNoting(() -> new TableDefinitionHashDatabaseInitializer(jdbiContext, "post", DefinitionFixture.POST_DEFINITION_2).initialize());
+        assertDoNoting(() -> new TableDefinitionHashDatabaseInitializer(jdbiContext, "post", DefinitionFixture.POST_DEFINITION_1
+        ).initialize());
     }
 
     private void assertDoNoting(InitializerRunner initializerRunner) {

@@ -1,10 +1,9 @@
 package com.jintakkim.postevaluator.generation;
 
 import com.jintakkim.postevaluator.User;
-
-import java.util.List;
+import com.jintakkim.postevaluator.gemini.BatchCallback;
 
 public interface UserGenerator {
-    List<User> generate(int count);
+    void generate(int count, BatchCallback<User> callback);
     String getModelName();
 }
