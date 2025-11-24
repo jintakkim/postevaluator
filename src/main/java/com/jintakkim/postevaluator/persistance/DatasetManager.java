@@ -8,15 +8,16 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 public class DatasetManager implements LabeledSampleProvider {
-    private static final int MAX_DATASET_SIZE = 500;
-    private static final int MIN_DATASET_SIZE = 10;
+    private static final int MAX_DATASET_SIZE = 200;
+    private static final int MIN_DATASET_SIZE = 1;
 
     private final JdbiContext jdbiContext;
-    private final int targetDatasetSize;
+    private final int targetUserDatasetSize;
+    private final int targetPostDatasetSize;
+    private final int sampleDatasetSize;
     private final SetupStrategy setupStrategy;
     private final PostRepository postRepository;
     private final UserRepository userRepository;
@@ -26,11 +27,11 @@ public class DatasetManager implements LabeledSampleProvider {
     private final UserGenerator userGenerator;
     private final Labeler labeler;
     private volatile boolean isInitialized = false;
-    private final AtomicInteger currentOffset = new AtomicInteger(0);
 
     public DatasetManager(
             JdbiContext jdbiContext,
-            int targetDatasetSize,
+            int targetUserDatasetSize,
+            int targetPostDatasetSize,
             SetupStrategy setupStrategy,
             PostRepository postRepository,
             UserRepository userRepository,
@@ -41,8 +42,12 @@ public class DatasetManager implements LabeledSampleProvider {
             Labeler labeler
     ) {
         this.jdbiContext = jdbiContext;
-        this.targetDatasetSize = targetDatasetSize;
+        this.targetUserDatasetSize = targetUserDatasetSize;
+        this.targetPostDatasetSize = targetPostDatasetSize;
+        this.sampleDatasetSize = targetPostDatasetSize * targetUserDatasetSize;
         validateDatasetSize();
+        log.info("유저 데이터 셋 사이즈: {}, 게시물 데이터 셋 사이즈: {} => 게시물 평가 데이터 셋 사이즈는 이들간 cross 조합이기 떄문에 {} 개입니다.",
+                targetUserDatasetSize, targetPostDatasetSize, sampleDatasetSize);
         this.setupStrategy = setupStrategy;
         this.postRepository = postRepository;
         this.userRepository = userRepository;
@@ -70,7 +75,7 @@ public class DatasetManager implements LabeledSampleProvider {
 
     private void handleClearStrategy() {
         deleteAll();
-        generateAndSaveSamples(targetDatasetSize);
+        generateAndSaveSamples(targetUserDatasetSize, targetPostDatasetSize);
         doLabeling();
     }
 
@@ -83,25 +88,29 @@ public class DatasetManager implements LabeledSampleProvider {
     }
 
     private void handleReuseStrictStrategy() {
-        int currentCount = postRepository.count();
-        int countToMake = targetDatasetSize - currentCount;
-        if (countToMake < 0) {
-            throw new IllegalStateException("기존 데이터가 필요한 데이터보다 많습니다. SetupStrategy을 CLEAR 혹은 REUSE_RANDOM으로 변경하세요.");
+        int currentUserCount = userRepository.count();
+        int currentPostCount = postRepository.count();
+        int userCountToMake = targetUserDatasetSize - currentUserCount;
+        int postCountToMake = targetPostDatasetSize - currentPostCount;
+        if (userCountToMake < 0 || postCountToMake < 0) {
+            throw new IllegalStateException("캐시된 데이터가 필요한 데이터보다 많습니다. SetupStrategy을 CLEAR 혹은 REUSE_PARTITION으로 변경하세요.");
         }
-        generateAndSaveSamples(countToMake);
+        generateAndSaveSamples(userCountToMake, postCountToMake);
         doLabeling();
     }
 
     private void handleReusePartitionStrategy() {
-        int currentCount = postRepository.count();
-        int countToMake = targetDatasetSize - currentCount;
-        generateAndSaveSamples(countToMake);
+        int currentUserCount = userRepository.count();
+        int currentPostCount = postRepository.count();
+        int userCountToMake = targetUserDatasetSize - currentUserCount;
+        int postCountToMake = targetPostDatasetSize - currentPostCount;
+        generateAndSaveSamples(userCountToMake, postCountToMake);
         doLabeling();
     }
 
-    private void generateAndSaveSamples(int count) {
-        generateAndSaveUsers(count);
-        generateAndSavePosts(count);
+    private void generateAndSaveSamples(int userCount, int postCount) {
+        generateAndSaveUsers(userCount);
+        generateAndSavePosts(postCount);
     }
 
     private void generateAndSaveUsers(int count) {
@@ -124,15 +133,15 @@ public class DatasetManager implements LabeledSampleProvider {
     }
 
     private void validateDatasetSize() {
-        if (targetDatasetSize < MIN_DATASET_SIZE || targetDatasetSize > MAX_DATASET_SIZE)
-            throw new IllegalArgumentException("데이터 셋 사이즈는 " + MIN_DATASET_SIZE + "에서" + MAX_DATASET_SIZE + "사이 이여야합니다.");
+        if (targetPostDatasetSize < MIN_DATASET_SIZE || targetPostDatasetSize> MAX_DATASET_SIZE || targetUserDatasetSize < MIN_DATASET_SIZE || targetUserDatasetSize > MAX_DATASET_SIZE)
+            throw new IllegalArgumentException("유저 혹은 게시물 데이터 셋 사이즈는 " + MIN_DATASET_SIZE + "에서" + MAX_DATASET_SIZE + "사이 이여야합니다.");
     }
 
     @Override
     public List<LabeledSample> get(int offset, int limit) {
         validateInitialized();
-        if (offset >= targetDatasetSize) return Collections.emptyList();
-        int remaining = targetDatasetSize - offset;
+        if (offset >= sampleDatasetSize) return Collections.emptyList();
+        int remaining = sampleDatasetSize - offset;
         int effectiveLimit = Math.min(limit, remaining);
         return sampleRepository.findLabeledSamples(offset, effectiveLimit);
     }
@@ -140,7 +149,7 @@ public class DatasetManager implements LabeledSampleProvider {
     @Override
     public List<LabeledSample> getAll() {
         validateInitialized();
-        return sampleRepository.findLabeledSamples(0, targetDatasetSize);
+        return sampleRepository.findLabeledSamples(0, sampleDatasetSize);
     }
 
     private void validateInitialized() {
@@ -151,6 +160,6 @@ public class DatasetManager implements LabeledSampleProvider {
     public int getTotalSize() {
         //라벨링 데이터 개수는 실질적으로 labeledSample 개수이다.
         int dbCount = labelRepository.count();
-        return Math.min(dbCount, targetDatasetSize);
+        return Math.min(dbCount, sampleDatasetSize);
     }
 }

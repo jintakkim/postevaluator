@@ -16,7 +16,8 @@ public class DatasetConfig {
     ) {
         this.datasetManager = new DatasetManager(
                 dbConfig.jdbiContext,
-                datasetProperties.datasetSize(),
+                datasetProperties.userDatasetSize(),
+                datasetProperties.postDatasetSize(),
                 datasetProperties.setupStrategy(),
                 dbConfig.postRepository,
                 dbConfig.userRepository,

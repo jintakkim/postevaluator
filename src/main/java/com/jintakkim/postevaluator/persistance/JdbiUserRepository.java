@@ -44,6 +44,16 @@ public class JdbiUserRepository implements UserRepository {
     }
 
     @Override
+    public int count() {
+        String sql = "SELECT COUNT(*) FROM user";
+        return jdbiContext.withHandle(handle ->
+                handle.createQuery(sql)
+                        .mapTo(Integer.class)
+                        .one()
+        );
+    }
+
+    @Override
     public User save(User user) {
         Long generatedId = DynamicEntityRepositoryUtils.save(jdbiContext, User.name, userSchema, user);
         return new User(generatedId, user.features());
