@@ -1,78 +1,329 @@
-# 게시글 추천 알고리즘 테스트 라이브러리
+## 제작한 이유
 
-## 이 라이브러리를 구상하게 된 이유
+추천 알고리즘을 만들었지만 정작 잘 작동하는지 테스트하는 것은 매우 어렵다.
 
-현제 내가 만들고 있는 앱에 게시글 추천 기능이 있다.
-
-다양한 요소(조회수, 좋아요수, 싫어요수, 게시글 퀄리티, 댓글수, 생성일)를 바탕으로 최종 스코어를 매겨 정렬을 하는 방식으로 만들었는데 문제는 이러한 게시글 추천 기능이 과연 얼마나 잘 작동하는지를 평가할 수 없다는 것이다.
-
-추천 알고리즘을 평가하는 것이 힘든 이유는 사람마다 추천에 대한 만족도 기준도 주관적이고 절대적인 정답이 없는 기능이기 때문이다.(정성 지표)
+사람마다 추천에 대한 만족도 기준도 주관적이고 절대적인 정답이 없는 기능이기 때문이다. (정성 지표)
 
 앱 이용자들이나, 테스트 유저들을 모집하여 피드백을 받고 얻은 데이터를 통해 추천 기능을 평가하고 개선하는 것이 제일 좋겠지만 개발중인 앱이거나 이러한 여건이 되지 않는 앱이라면 이러한 방식은 도입하는 것은 불가능하다.
 
-마침 앱 이용자들이나, 테스트 유저들을 대신해줄 ai가 있기 떄문에 처음에는 아주 단순하게 ai에게 대신 시키면 되겠다라는 생각으로 이 라이브러리르 만들게 되었다.
+이러한 앱들을 위해 대신 llm을 이용하여 데이터 셋들을 만들어 추천 알고리즘을 정량적으로 평가한다.
 
-도중 그냥 ai한테 추천을 시키면 되는거 아니야? 라고 생각을 했지만 단순 ai를 사용한 추천에는 여러 단점이 존재한다.
+### 간단한 사용법
 
-- 만약 시중Llm을 쓴다면 내가 가지고 있는 전체 데이터를 바탕으로 학습시켜 놓고 추천할때마다 api호출해야 되기 때문에 사용자 경험, 비용 문제등의 이유로 불가능하다.
-- 직접 작은 ai 모델을 만들어 학습을 한다고 하더라도 개발 단계의 앱에서는 모델학습에 필요한 데이터 수는 현실적으로 얻기 힘들 것이다.
-- 초기 목표가 가벼운 수식적인 추천 알고리즘을 테스트하는 것이기 떄문에 초기 목표와는 거리가 있다.
+### Jatpack을 통한 의존성 설치
 
-## 구체적인 로직은 아래와 같다.
+```java
+	<repositories>
+		<repository>
+		    <id>jitpack.io</id>
+		    <url>https://jitpack.io</url>
+		</repository>
+	</repositories>
+		<dependency>
+	    <groupId>com.github.jintakkim</groupId>
+	    <artifactId>postevaluator</artifactId>
+	    <version>1.0.0</version>
+	</dependency>
+```
 
-1. ai를 이용한 추천이 아니라 기존 추천 알고리즘을 ai로 테스트하는 것이기 떄문에
+### **applicationConfig를 자신의 추천 알고리즘의 상황에 맞춰서 구성한다.**
 
-   조회수, 좋아요수, 싫어요수, 게시글 내용, 댓글수, 생성일을 X
+applicationConfig는 3가지 Properties를 받는다.
 
-   X에 대해 ai가 판단한 스코어를 Y로하는 라벨링된 데이터를 무작위로 생성 ai를 통해 만든다.
+| 이름 | 설명 |
+| --- | --- |
+| DefinitionProperties | 사용자의 앱의 특성에 맞춰 유저 및 게시판 특징을 정의한다. 빌트인이 정의되어 있어 간단하게 설정 가능하다. |
+| DatasetProperties | 생성하기를 원하는 유저, 게시글 데이터셋 사이즈를 정의한다.  |
+| AlgorithmMetricProperties | 평가 방식을 정의한다. 빌트인으로 MSE, RMSE가 정의되어 있지만 필요시 직접 구현가능하다. |
+| geminiProperties | gemini api키를 정의한다. api키로 null값을 넣으면 환경변수 GOOGLE_API_KEY로 key를 읽는다. |
+| searchProperties | 그리드 서치에 사용되는 하이퍼 파라미터를 정의한다. |
 
-   (기존에는 이러한 라벨링된 데이터를 앱 이용자들이나, 테스트 유저들로 부터 만들었지만 이를 ai로 대체한것)
+빌트인을 사용한 applicationConfig 구성 예시
 
-2. 라벨링된 데이터를 바탕으로 추천 알고리즘을 실행시켜 자체 추천 알고리즘의 판단 값과 데이터의 Y값의 차이를 cost로 설정하여(2주의 기한밖에 없기 떄문에 단순 MSE을 적용) 추천 알고리즘을 평가한다.
-3. 시간이 된다면 대부분의 추천 알고리즘들은 가중치(상수값)들이 많을텐데 그리드 서치 전략들을 추가적으로 적용할 수 있게하여 같은 추천 모델 내에서도 최적의 가중치를 찾을 수 있게 여러 전략들을 만든다.
+```java
+ApplicationConfig applicationConfig = new ApplicationConfig(
+						new GeminiProperties("google_api_key"),
+            new DefinitionProperties(
+                    DefinitionProperties.BuiltIn.USER_DEFINITION.ALL_BUILTIN_FEATURES_APPLIED,
+                    DefinitionProperties.BuiltIn.POST_DEFINITION.ALL_BUILTIN_FEATURES_APPLIED
+            ),
+            DatasetProperties.defaults(),
+            new AlgorithmMetricProperties(AlgorithmMetricProperties.BuiltIn.MEAN_SQUARED_ERROR)
+    );
+```
 
-## **한계점**
+### RecommendTest를 생성한다.
 
-과연 llm이 만든 라벨링된 데이터의 정답이 실제 유저들의 판단이랑 얼마나 큰 오차가 발생할지 알 수 없다.
+```java
+PostRecommendTest postRecommendTest = new PostRecommendTest(applicationConfig);
+```
 
-이를 최대한 프롬프트를 잘짜 간격을 매우는게 중요할 것이다.
+### 테스트를 진행한다.
 
-## 구현 단계는 아래와 같다.
+테스트 타입
 
-1. 라벨링된 데이터, 추천 알고리즘을 입력으로 하여 라벨링된 데이터 대비 알고리즘의 성능를 출력으로 하는 평가기(Evaluator)컴포넌트를 만든다.
-2. 라벨링 데이터를 만드는 생성기(Generator)컴포넌트를 만든다.
-3. 전체적인 플로우(데이터 생성을 요청하고 데이터를 저장, 저장된 데이터, 추천 알고리즘 로직을 받아 평가기를 실행)를 진행하는 client 컴포넌트를 만든다.
-4. 추가적으로 client 컴포넌트에 여러 전략들을 구현한다.
+| 이름 | 설명 |
+| --- | --- |
+| simpleTest | 주어진 알고리즘을 평가한다. |
+| gridSearchTest | 주어진 알고리즘을 그리드 서치를 통해 평가한다.  |
 
-## 구현 단계는 아래와 같다.
+테스트 text를 출력하고 싶다면 
 
-1. 라벨링된 데이터, 추천 알고리즘을 입력으로 하여 라벨링된 데이터 대비 알고리즘의 성능를 출력으로 하는 평가기(Evaluator)컴포넌트를 만든다.
-2. 라벨링 데이터를 만드는 생성기(Generator)컴포넌트를 만든다.
-3. 전체적인 플로우(데이터 생성을 요청하고 데이터를 저장, 저장된 데이터, 추천 알고리즘 로직을 받아 평가기를 실행)를 진행하는 client 컴포넌트를 만든다.
-4. 추가적으로 client 컴포넌트에 여러 전략들을 구현한다.
+```java
+//simpleTest 결과 출력
+System.out.println(ResultFormatter.formatEvaluateResult(evaluateResult));
+//gridSearchTest 결과 출력
+System.out.println(ResultFormatter.formatSearchResult(searchResult));
+```
 
-## 핵심 컴포넌트 및 용어 정의
+# 실행 결과
 
-- 피처 (Feature, X): 알고리즘의 입력값.
-   - (조회수, 좋아요 수, 싫어요 수, 댓글 수, 게시글 내용, 생성 시간)
-- 스코어(Score, Y): 피처(X)를 보고 판단한 정답 점수, 점수는 (0~1) 사이값을 가진다.
+<img width="1486" height="467" alt="스크린샷 2025-11-24 오후 9 46 15" src="https://github.com/user-attachments/assets/8b4eb278-c9df-4326-a29c-70170feffe96" />
 
-  판단은 ai가 할 수도 있고, 직접 클라이언트를 통해 사람이 넣을 수도 있다.
+그리드 서치 결과.
 
-- 예측된 스코어(predictScore, Y_pred): 알고리즘이 피처(X)를 입력받아 예측한 점수(pred_Y)
+## 주요기능
 
-  헷갈리는 것을 방지하기 위하여 스코어는 평가자료에서 제공되는 값, 알고리즘 결과로 나온 스코어는 예측된 스코어로 명칭을 통일한다.
+---
 
-- 라벨링된 게시글 (LabeledPost):  X와 스코어의의 쌍, 일명 정답지, 평가자료.
-- 알고리즘 (Algorithm): 피처(X)를 입력받아 점수(pred_Y)를 반환하는, 우리가 테스트하려는 대상
-- 메트릭 (Metric):  정답(Y)과 예측 점수(Y_pred)를 비교하여 비용(Cost)을 계산하는 '전략' (예: MSE, MAE).
-- 비용(Cost): 메트릭을 통해 나온 알고리즘 평가 지표, 클수록 성능이 떨어지는 알고리즘이며 작을수록 우수한 알고리즘이다.
-- 평가기 (Evaluator): 알고리즘, 메트릭, 라벨링된 게시글을 받아, 전체 라벨링된 게시글(정답 데이터셋)에 대해 평가를 실행하는 주체.
-- 평가 결과 (Result): 평가기가 평가 후 반환하는 정보, 사용된 메트릭, 비용이 포함된다.
+**주요 패키지들**
 
-### 세부 구현 사항
+| 패키지명 | 설명 |
+| --- | --- |
+| client | 테스트 라이브러리의 시작점, 사용자들이 사용한다. |
+| generation | llm을 이용하여 데이터 셋을 만든다. |
+| labeling | generation패키지에서 생성된 데이터 셋을 llm을 통해 평가(라벨링)한다. |
+| persistance | 라벨링된 데이터 셋을 캐쉬하고 추후 추천 알고리즘 평가에 제공한다. |
+| evalutation | 추천 알고리즘을 라벨링된 데이터 셋을 이용하여 테스트한다. |
 
-- ai로 부터 라벨링된 데이터를 받을때 이유도 받을 수 있게 만든다.
-- 메트릭은 다양한 지표를 쓸 수 있도록 다형성을 활용한다.
-- 라벨링된 데이터를 만들때 feature를 만드는 컴포넌트와 feature를 기준으로 판단하는 컴포넌트를 분리하여 만든다.
-- 따로 feature를 만들어 저장해야되기 때문에 feature별로 id를 지정하고 라벨링된 데이터는 featureId - score 쌍으로 저장하여 중복저장을 피한다.
+**전반적인 라이브러리 아키텍처**
+
+```mermaid
+flowchart TB
+ subgraph Client_Layer["Client Layer"]
+    direction TB
+        SimpleTest["Simple Test"]
+        GridSearchTest["Grid Search Test"]
+  end
+ subgraph Core_Management["Core Management"]
+        DM["DatasetManager<br>(LabeledSampleProvider)"]
+        Config["DbConfig"]
+        Context["JdbiContext<br>(ThreadLocal Handle)"]
+  end
+ subgraph Gen_Label_Layer["Generation & Labeling (Gemini)"]
+        GenUser["UserGenerator"]
+        GenPost["PostGenerator"]
+        Labeler["Labeler<br>(SequentialGeminiLabeler)"]
+        GeminiClient["Gemini Client<br>(Google GenAI SDK)"]
+        GeminiAPI["Google Gemini API"]
+        n2["Untitled Node"]
+  end
+ subgraph Persistence_Layer["Persistence Layer (SQLite)"]
+        RepoUser["UserRepository"]
+        RepoPost["PostRepository"]
+        RepoLabel["LabelRepository"]
+        RepoSample["SampleRepository<br>(Virtual Join View)"]
+        SQLite[("SQLite Database<br>test.db")]
+  end
+ subgraph Evaluation_Layer["Evaluation Layer"]
+        Evaluator["Evaluator<br>(Batch/Simple)"]
+        Algo["RecommendAlgorithm<br>(Target Implementation)"]
+        Metric["AlgorithmMetric<br>(MSE, RMSE etc.)"]
+  end
+    Config --> Context
+    DM -- Use --> Context
+    DM -- "2. Generate Request" --> GenUser & GenPost
+    DM -- "3. Label Request" --> Labeler
+    GenUser --> GeminiClient & n2
+    GenPost --> GeminiClient
+    Labeler --> GeminiClient
+    GeminiClient <-- JSON Response --> GeminiAPI
+    GenUser -- Save --> RepoUser
+    GenPost -- Save --> RepoPost
+    Labeler -- Save --> RepoLabel
+    RepoUser -- Insert --> SQLite
+    RepoPost -- Insert --> SQLite
+    RepoLabel -- Insert --> SQLite
+    SimpleTest -- "4. Run Eval" --> Evaluator
+    GridSearchTest -- "4. Run Eval" --> Evaluator
+    Evaluator -- Fetch Data (next/get) --> DM
+    DM -- Query --> RepoSample
+    RepoSample -- Select --> SQLite
+    Evaluator -- Predict Score --> Algo
+    Evaluator -- Calculate Cost --> Metric
+```
+
+## 전반적인 어플리케이션 흐름
+
+```mermaid
+graph LR
+    Step1["1. 설정 (Setup)<br/>User/Post 스키마 정의"]:::step
+    Step2["2. 데이터셋 구축<br/>(DatasetManager)"]:::step
+    Step3["3. 알고리즘 평가<br/>(Evaluator)"]:::step
+    Step4["4. 결과 확인<br/>(Metric Result)"]:::step
+
+    Gemini("🤖 Gemini AI<br/>생성 & 라벨링"):::ai
+
+    Step1 --> Step2
+    Step2 <-->|요청 & 응답| Gemini
+    Step2 -->|Labeled Data| Step3
+    Step3 -->|Cost / Score| Step4
+  
+```
+
+# 자세한 설정 값 설명
+
+---
+
+### DefinitionProperties
+
+테스트 하고 싶은 추천 알고리즘의 인자를 동적으로 설정한다.
+
+UserDefinition, PostDefinition으로 구성이 된다.
+
+위 값을 기준으로 런타임에 데이터베이스 스키마를 구성된다.
+
+테스트 중 둘중 한개의 구성이 바뀌게 된다면 기존 테이블이 drop되고 새롭게 데이터베이스 스키마를 구성한다.
+
+**만일 추천 알고리즘에서 유저가 좋아하는 토픽, 싫어하는 토픽, 선호하는 문장 길이 수를 고려한다면 아래와 같이 추가한다. (빌트인을 사용한 간단하게 추가한 예시)**
+
+```java
+new UserDefinition(
+	Map.of(
+	        DefinitionProperties.Builtin.USER_FEATURE.LIKE_TOPICS.name(), 
+	        DefinitionProperties.Builtin.USER_FEATURE.LIKE_TOPICS,
+	        DefinitionProperties.Builtin.USER_FEATURE.DISLIKE_TOPICS.name(), 
+	        DefinitionProperties.Builtin.USER_FEATURE.DISLIKE_TOPICS,
+	        DefinitionProperties.Builtin.USER_FEATURE.PREFERRED_LENGTH.name(), 
+	        DefinitionProperties.Builtin.USER_FEATURE.PREFERRED_LENGTH
+	),
+	LabelingCriteria.builder()
+	        .addCriterion("좋아하는 주제를 고려하여 점수 부여")
+	        .addCriterion("싫어하는 주제를 고려하여 점수 부여")
+	        .addCriterion("선호하는 문장 길이를 고려하여 점수 부여")
+	        .build()
+);
+```
+
+### FeatureDefinition
+
+유저 설정(UserDefinition)이나 게시물 설정(PostDefinition)은 여러 특징 설정을 넣을 수 있다.
+
+여기서 설정되는 FeatureType을 기준으로 Db 컬럼 타입 설정 등 전반적인 어플리케이션 타입 체크 및 파싱 로직이 작동되므로 정확한 타입을 기입해야되고 추후 알고리즘 구현시에도 여기서 정의한 타입과 일치해야한다.
+
+**만약 게시물 특징에 글쓴이의 명성도를 간단하게 추가하고 싶다면 아래와 같이 구성할 수 있다.**
+
+```java
+new FeatureDefinition(
+	"reputation",
+	FeatureType.DOUBLE,
+	new NumberTypeGenerationCriteriaBuilder.MinMaxBuilder()
+		.min(0.0)
+    .max(1.0)
+    .addCondition("작성자의 명성을 나타내는 스코어", "클 수록 명성이 높게 생성")
+    .build()
+);
+```
+
+---
+
+## DatasetProperties
+
+데이터 셋 관리 설정을 한다.
+
+유저 데이터셋, 게시물 데이터셋 개수 설정, SetupStrategy 설정이 가능하다.
+
+SetupStrategy 별 동작 설명
+
+| 이름 | 설명 |
+| --- | --- |
+| CLEAR | 캐쉬된 유효한 데이터셋이 있어도 기존 데이터 셋을 전부 삭제하고 다시 데이터셋을 생성한다. |
+| REUSE_PARTITION | 캐쉬된 유효한 데이터셋이 있다면 기존 데이터 셋중 일부를 재사용한다. 캐쉬된 데이터셋이 설정한 크기보다 많을 경우 pk기준으로 오름차순으로 일부를 선택한다. 적을 경우에는 필요한 데이터셋을 추가로 더 만든다. |
+| REUSE_STRICT | 캐쉬된 유효한 데이터셋이 있다면 기존 데이터 셋을 재사용한다. 캐쉬된 데이터셋이 설정한 크기보다 많을 경우 예외를 발생시킨다. 적을 경우에는 필요한 데이터셋을 추가로 더 만든다. |
+
+---
+
+## Generator 동작 설명
+
+Generator를 통해 데이터를 만든다.
+
+llm api 출력 토큰 제한으로 인해 30개보다 초과된 데이터가 설정되었더라면 병렬 요청으로 전환된다. 
+
+gemini는 암시적 캐싱을 지원하기 떄문에 비슷한 타입의 요청은 낮은 비용으로 여러번 호출할 수 있다.
+
+### 실행 화면(게시글 생성기)
+
+<img width="899" height="451" alt="스크린샷 2025-11-24 오후 9 43 20" src="https://github.com/user-attachments/assets/e0ec5534-84cb-45de-8c57-6d0b25f16a2e" />
+
+
+### Generator 동작 다이어그램
+
+```mermaid
+graph TD
+    Start([🚀 Start]) --> CheckSize{"Total > 30 ?"}
+
+    CheckSize -- No (Small) --> RunSync[동기 실행]:::mainNode
+    RunSync --> Callback1[Callback 호출]:::mainNode
+    Callback1 --> End([End])
+
+    CheckSize -- Yes (Large) --> SplitLoop[루프: 30개씩 쪼개기]:::mainNode
+    
+    subgraph Parallel_Workers ["⚡ Async Workers (병렬 실행)"]
+        SplitLoop -.-> Task1[Batch 1 요청]:::workerNode
+        SplitLoop -.-> Task2[Batch 2 요청]:::workerNode
+        SplitLoop -.-> TaskN[Batch N 요청]:::workerNode
+        
+        Task1 & Task2 & TaskN --> Callback2[각자 Callback 호출]:::workerNode
+    end
+
+    Callback2 -.-> WaitAll["⏳ join() (모두 끝날 때까지 대기)"]:::mainNode
+    WaitAll --> End
+```
+
+## Labeler 동작 설명
+
+generator를 통해 만든 데이터를 평가한다.
+
+게시글과 유저를 조합하여 라벨링을 하기 때문에 단순히 게시글 데이터수를 20개 유저 데이터수를 20개로 설정해도 총 400개의 라벨링 데이터를 만들게 된다.
+
+평가시 DefinitionProperties에서 설정된 LabelingCriteria를 전달하여 어떤 기준으로 라벨링을 진행할지 전달할 수 있다.
+
+llm api 출력 토큰 제한으로 인해 30개 이상의 데이터가 설정되었더라면 병렬 요청으로 전환된다. 
+
+### 실행 화면
+
+<img width="1485" height="459" alt="스크린샷 2025-11-24 오후 9 43 34" src="https://github.com/user-attachments/assets/3db7138d-90c7-4000-8629-3bbafc375b04" />
+
+### Labeler 동작 다이어그램
+
+```mermaid
+graph TD
+    Start([🚀 Start]) --> CheckBatch{"Size <= 30?"}:::decision
+
+    CheckBatch -- Yes --> SyncLabel["동기 실행 (Direct Call)"]:::mainFlow
+    SyncLabel --> Callback1[Callback]:::mainFlow
+    Callback1 --> End([End])
+
+    CheckBatch -- No --> SplitLoop[배치 분할 루프]:::mainFlow
+
+    subgraph Async_Workers ["⚡ 병렬 워커 (ExecutorService)"]
+        direction TB
+        SplitLoop -.->|Submit Task| WorkerAction(API 호출 & 라벨링):::workerFlow
+        WorkerAction --> Callback2[Callback]:::workerFlow
+    end
+
+    Callback2 -.-> WaitAll["⏳ Join (모두 완료 대기)"]:::mainFlow
+    WaitAll --> End
+
+  
+```
+
+---
+
+## Evaluator 동작 설명
+
+라벨링된 게시글, 유저 데이터를 Cross Join하여 셈플 데이터를 만든다.
+
+사용자가 평가하고 싶은 알고리즘은 이 샘플 데이터를 받게 되며 받는 샘플데이터를 평가후 0.0~1.0사이의 스코어로 변환해서 응답하는 알고리즘을 구현하면 된다.
+
+**사용자가 구현해야하는 인터페이스(추천 알고리즘)**
