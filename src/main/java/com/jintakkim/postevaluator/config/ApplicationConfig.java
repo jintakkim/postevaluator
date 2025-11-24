@@ -1,11 +1,8 @@
 package com.jintakkim.postevaluator.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jintakkim.postevaluator.config.properties.AlgorithmMetricProperties;
-import com.jintakkim.postevaluator.config.properties.DatasetProperties;
-import com.jintakkim.postevaluator.config.properties.DefinitionProperties;
+import com.jintakkim.postevaluator.config.properties.*;
 
-import com.jintakkim.postevaluator.config.properties.SearchProperties;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -22,6 +19,7 @@ public class ApplicationConfig {
     public final SearchConfig searchConfig;
 
     public ApplicationConfig(
+            GeminiProperties geminiProperties,
             DefinitionProperties definitionProperties,
             DatasetProperties datasetProperties,
             AlgorithmMetricProperties algorithmMetricProperties,
@@ -30,7 +28,7 @@ public class ApplicationConfig {
         this.executorConfig = new ExecutorConfig();
         this.dbConfig = new DbConfig(definitionProperties);
         dbConfig.initialize();
-        this.geminiConfig = new GeminiConfig();
+        this.geminiConfig = new GeminiConfig(geminiProperties);
         this.objectMapper = new ObjectMapper();
         this.generatorConfig = new GeneratorConfig(definitionProperties, geminiConfig, objectMapper, executorConfig);
         this.labelerConfig = new LabelerConfig(definitionProperties, geminiConfig, objectMapper, executorConfig);
@@ -42,10 +40,11 @@ public class ApplicationConfig {
     }
 
     public ApplicationConfig(
+            GeminiProperties geminiProperties,
             DefinitionProperties definitionProperties,
             DatasetProperties datasetProperties,
             AlgorithmMetricProperties algorithmMetricProperties
     ) {
-        this(definitionProperties, datasetProperties, algorithmMetricProperties, null);
+        this(geminiProperties, definitionProperties, datasetProperties, algorithmMetricProperties, null);
     }
 }
