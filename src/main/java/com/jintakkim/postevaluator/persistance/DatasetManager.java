@@ -6,6 +6,7 @@ import com.jintakkim.postevaluator.generation.UserGenerator;
 import com.jintakkim.postevaluator.labeling.Labeler;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -60,8 +61,8 @@ public class DatasetManager implements LabeledSampleProvider {
             case REUSE_STRICT:
                 handleReuseStrictStrategy();
                 break;
-            case REUSE_RANDOM:
-                handleReuseRandomStrategy();
+            case REUSE_PARTITION:
+                handleReusePartitionStrategy();
                 break;
         }
         isInitialized = true;
@@ -91,7 +92,7 @@ public class DatasetManager implements LabeledSampleProvider {
         doLabeling();
     }
 
-    private void handleReuseRandomStrategy() {
+    private void handleReusePartitionStrategy() {
         int currentCount = postRepository.count();
         int countToMake = targetDatasetSize - currentCount;
         generateAndSaveSamples(countToMake);
@@ -129,19 +130,27 @@ public class DatasetManager implements LabeledSampleProvider {
 
     @Override
     public List<LabeledSample> get(int offset, int limit) {
-        if(!isInitialized) throw new IllegalStateException("데이터셋이 준비되어 있지 않습니다.");
-        return sampleRepository.findLabeledSamples(offset, limit);
+        validateInitialized();
+        if (offset >= targetDatasetSize) return Collections.emptyList();
+        int remaining = targetDatasetSize - offset;
+        int effectiveLimit = Math.min(limit, remaining);
+        return sampleRepository.findLabeledSamples(offset, effectiveLimit);
     }
 
     @Override
     public List<LabeledSample> getAll() {
+        validateInitialized();
+        return sampleRepository.findLabeledSamples(0, targetDatasetSize);
+    }
+
+    private void validateInitialized() {
         if(!isInitialized) throw new IllegalStateException("데이터셋이 준비되어 있지 않습니다.");
-        return sampleRepository.findLabeledSamples();
     }
 
     @Override
     public int getTotalSize() {
         //라벨링 데이터 개수는 실질적으로 labeledSample 개수이다.
-        return labelRepository.count();
+        int dbCount = labelRepository.count();
+        return Math.min(dbCount, targetDatasetSize);
     }
 }
