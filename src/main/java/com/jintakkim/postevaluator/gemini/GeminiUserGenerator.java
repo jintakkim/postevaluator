@@ -35,11 +35,6 @@ public class GeminiUserGenerator extends AbstractGeminiGenerator<User> implement
     }
 
     @Override
-    public List<User> generate(int count) {
-        return List.of();
-    }
-
-    @Override
     protected List<User> parseResponse(GenerateContentResponse response) {
         try {
             log.info(response.text());
