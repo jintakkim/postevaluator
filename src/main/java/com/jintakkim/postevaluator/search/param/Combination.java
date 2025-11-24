@@ -1,9 +1,11 @@
 package com.jintakkim.postevaluator.search.param;
 
 import com.jintakkim.postevaluator.search.CombinationAccessor;
+import lombok.Getter;
 
 import java.util.*;
 
+@Getter
 public class Combination implements CombinationAccessor {
     private final Map<String, HyperParameter> parameters;
 

@@ -9,6 +9,6 @@ public record EvaluateResult(
         AlgorithmMetric algorithmMetric,
         // 평가 지표를 통해 측정된 비용
         double cost,
-        List<Long> topErrorOccurredFeatureIds
+        List<SamplePrediction> topErrorOccurredSamples
         ) {
 }

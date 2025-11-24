@@ -6,9 +6,10 @@ public record SamplePrediction(
         long postId,
         long userId,
         double labeledScore,
+        String labeledReason,
         double predictScore
 ) {
     public SamplePrediction(LabeledSample labeledSample, double predictScore) {
-        this(labeledSample.post().id(), labeledSample.user().id(), labeledSample.labelScore(), predictScore);
+        this(labeledSample.post().id(), labeledSample.user().id(), labeledSample.labelScore(), labeledSample.labelReason(), predictScore);
     }
 }

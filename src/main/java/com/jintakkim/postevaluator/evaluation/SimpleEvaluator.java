@@ -21,7 +21,7 @@ public class SimpleEvaluator implements Evaluator {
     public EvaluateResult evaluate(RecommendAlgorithm recommendAlgorithm) {
         List<SamplePrediction> predictions = predictScores(recommendAlgorithm);
         MetricResult metricResult = algorithmMetric.calculateCost(predictions);
-        return new EvaluateResult(algorithmMetric, metricResult.cost(), metricResult.topErrorOccurredPostIds());
+        return new EvaluateResult(algorithmMetric, metricResult.cost(), metricResult.topErrorOccurred());
     }
 
     private List<SamplePrediction> predictScores(RecommendAlgorithm recommendAlgorithm) {

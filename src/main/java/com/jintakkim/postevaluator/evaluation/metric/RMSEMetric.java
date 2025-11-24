@@ -5,16 +5,10 @@ import com.jintakkim.postevaluator.evaluation.SamplePrediction;
 import java.util.List;
 
 public class RMSEMetric implements AlgorithmMetric {
-    private static final int DEFAULT_TOP_ERROR_COUNT = 0;
-
     private final MSEMetric mseMetric;
 
     public RMSEMetric(int topErrorCount) {
         this.mseMetric = new MSEMetric(topErrorCount);
-    }
-
-    public RMSEMetric() {
-        this(DEFAULT_TOP_ERROR_COUNT);
     }
 
     @Override
@@ -25,6 +19,6 @@ public class RMSEMetric implements AlgorithmMetric {
     @Override
     public MetricResult calculateCost(List<SamplePrediction> predictions) {
         MetricResult mseMetricResult = mseMetric.calculateCost(predictions);
-        return new MetricResult(mseMetricResult.topErrorOccurredPostIds(), Math.sqrt(mseMetricResult.cost()));
+        return new MetricResult(mseMetricResult.topErrorOccurred(), Math.sqrt(mseMetricResult.cost()));
     }
 }

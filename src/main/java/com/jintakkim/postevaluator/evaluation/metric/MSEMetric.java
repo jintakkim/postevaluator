@@ -7,15 +7,10 @@ import java.util.Comparator;
 import java.util.List;
 
 public class MSEMetric implements AlgorithmMetric {
-    private static final int DEFAULT_TOP_ERROR_COUNT = 0;
     private final int topErrorCount;
 
     public MSEMetric(int topErrorCount) {
         this.topErrorCount = topErrorCount;
-    }
-
-    public MSEMetric() {
-        this(DEFAULT_TOP_ERROR_COUNT);
     }
 
     @Override
@@ -32,21 +27,21 @@ public class MSEMetric implements AlgorithmMetric {
         for (SamplePrediction prediction : predictions) {
             double error = prediction.labeledScore() - prediction.predictScore();
             double squaredError = error * error;
-            errorRecords.add(new ErrorRecord(squaredError, prediction.postId()));
+            errorRecords.add(new ErrorRecord(squaredError, prediction));
             sumSquaredError += squaredError;
         }
         double cost = sumSquaredError / scoreSize;
-        List<Long> highCostPostIds = calHighCost(errorRecords);
-        return new MetricResult(highCostPostIds, cost);
+        List<SamplePrediction> highCostPredictions = calHighCost(errorRecords);
+        return new MetricResult(highCostPredictions, cost);
     }
 
-    private List<Long> calHighCost(List<ErrorRecord> errorRecords) {
+    private List<SamplePrediction> calHighCost(List<ErrorRecord> errorRecords) {
         return errorRecords.stream()
                 .sorted(Comparator.comparingDouble(ErrorRecord::squaredError).reversed())
                 .limit(topErrorCount)
-                .map(ErrorRecord::postId)
+                .map(ErrorRecord::prediction)
                 .toList();
     }
 
-    private record ErrorRecord(double squaredError, long postId) {}
+    private record ErrorRecord(double squaredError, SamplePrediction prediction) {}
 }

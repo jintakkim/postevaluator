@@ -15,14 +15,14 @@ public class ClientTest extends ApplicationIntegrationTest {
     @DisplayName("BuiltIn 피처 기반 추천 알고리즘 테스트")
     void simpleTest() {
         EvaluateResult evaluateResult = postRecommendTest.simpleTest(new SimpleAlgorithm());
-        System.out.println(evaluateResult);
+        System.out.println(ResultFormatter.formatEvaluateResult(evaluateResult));
     }
 
     @Test
     @DisplayName("BuiltIn 피처 기반 추천 그리드 테스트")
     void gridTest() {
         SearchResult searchResult = postRecommendTest.gridSearchTest(new SimpleParameterizedAlgorithm());
-        System.out.println(searchResult);
+        System.out.println(ResultFormatter.formatSearchResult(searchResult));
     }
 
     static class SimpleAlgorithm implements RecommendAlgorithm {
