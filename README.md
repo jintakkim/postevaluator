@@ -1,3 +1,5 @@
+# 게시글 추천 알고리즘 평가 라이브러리
+
 ## 제작한 이유
 
 추천 알고리즘을 만들었지만 정작 잘 작동하는지 테스트하는 것은 매우 어렵다.
@@ -327,3 +329,12 @@ graph TD
 사용자가 평가하고 싶은 알고리즘은 이 샘플 데이터를 받게 되며 받는 샘플데이터를 평가후 0.0~1.0사이의 스코어로 변환해서 응답하는 알고리즘을 구현하면 된다.
 
 **사용자가 구현해야하는 인터페이스(추천 알고리즘)**
+```java
+@FunctionalInterface
+public interface RecommendAlgorithm {
+    /**
+     * @return predictScore min 0.0 ~ max 1.0 사이의 수 추천도가 높을 수록 커진다.
+     */
+    double calculateScore(SampleAccessor sampleAccessor);
+}
+```
