@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.genai.Client;
+import com.google.genai.types.GenerateContentConfig;
 import com.google.genai.types.GenerateContentResponse;
 import com.google.genai.types.Schema;
 import com.google.genai.types.Type;
@@ -20,17 +21,17 @@ import java.util.stream.Collectors;
 
 @Slf4j
 public class GeminiPostGenerator extends AbstractGeminiGenerator<Post> implements PostGenerator {
-    private final PostDefinition postDefinition;
     private final ObjectMapper objectMapper;
+    private final PostDefinition postDefinition;
 
     public GeminiPostGenerator(
             Client client,
             ObjectMapper objectMapper,
             PostDefinition postDefinition
             ) {
-        super(client, Post.name);
-        this.postDefinition = postDefinition;
+        super(client, Post.name, composeGenerateContentConfig(postDefinition));
         this.objectMapper = objectMapper;
+        this.postDefinition = postDefinition;
     }
 
     @Override
@@ -53,26 +54,32 @@ public class GeminiPostGenerator extends AbstractGeminiGenerator<Post> implement
             return new Post(features);
     }
 
-    @Override
-    protected Schema composeSchemaFromDefinition() {
-        return Schema.builder()
-                .description(entityName)
-                .type(Type.Known.ARRAY)
-                .items(composePostSchema())
+    private static GenerateContentConfig composeGenerateContentConfig(PostDefinition definition) {
+        return GenerateContentConfig.builder()
+                .responseMimeType("application/json")
+                .responseSchema(composeSchemaFromDefinition(definition))
                 .build();
     }
 
-    private Schema composePostSchema() {
+    private static Schema composeSchemaFromDefinition(PostDefinition definition) {
+        return Schema.builder()
+                .description(Post.name)
+                .type(Type.Known.ARRAY)
+                .items(composePostSchema(definition))
+                .build();
+    }
+
+    private static Schema composePostSchema(PostDefinition definition) {
         return Schema.builder()
                 .type(Type.Known.OBJECT)
                 .description("post")
-                .properties(Map.of("feature", composeFeatureSchema()))
+                .properties(Map.of("feature", composeFeatureSchema(definition)))
                 .required(List.of("feature"))
                 .build();
     }
 
-    private Schema composeFeatureSchema() {
-        Map<String, Schema> schemaProperties = postDefinition.featureDefinitions().values().stream()
+    private static Schema composeFeatureSchema(PostDefinition definition) {
+        Map<String, Schema> schemaProperties = definition.featureDefinitions().values().stream()
                 .collect(Collectors.toMap(
                         FeatureDefinition::name,
                         feature -> Schema.builder()
@@ -80,7 +87,7 @@ public class GeminiPostGenerator extends AbstractGeminiGenerator<Post> implement
                                 .description(feature.generationCriteria().toString())
                                 .build()
                 ));
-        List<String> requiredFields = new ArrayList<>(postDefinition.featureDefinitions().keySet());
+        List<String> requiredFields = new ArrayList<>(definition.featureDefinitions().keySet());
         return Schema.builder()
                 .type(Type.Known.OBJECT)
                 .properties(schemaProperties)

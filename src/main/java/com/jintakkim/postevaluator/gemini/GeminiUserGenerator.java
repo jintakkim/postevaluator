@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.genai.Client;
+import com.google.genai.types.GenerateContentConfig;
 import com.google.genai.types.GenerateContentResponse;
 import com.google.genai.types.Schema;
 import com.google.genai.types.Type;
@@ -28,7 +29,7 @@ public class GeminiUserGenerator extends AbstractGeminiGenerator<User> implement
             ObjectMapper objectMapper,
             UserDefinition userDefinition
     ) {
-        super(client, User.name);
+        super(client, User.name, composeGenerateContentConfig(userDefinition));
         this.userDefinition = userDefinition;
         this.objectMapper = objectMapper;
     }
@@ -58,26 +59,32 @@ public class GeminiUserGenerator extends AbstractGeminiGenerator<User> implement
         return new User(features);
     }
 
-    @Override
-    protected Schema composeSchemaFromDefinition() {
-        return Schema.builder()
-                .description(entityName)
-                .type(Type.Known.ARRAY)
-                .items(composeUserSchema())
+    private static GenerateContentConfig composeGenerateContentConfig(UserDefinition definition) {
+        return GenerateContentConfig.builder()
+                .responseMimeType("application/json")
+                .responseSchema(composeSchemaFromDefinition(definition))
                 .build();
     }
 
-    private Schema composeUserSchema() {
+    private static Schema composeSchemaFromDefinition(UserDefinition definition) {
+        return Schema.builder()
+                .description(User.name)
+                .type(Type.Known.ARRAY)
+                .items(composeUserSchema(definition))
+                .build();
+    }
+
+    private static Schema composeUserSchema(UserDefinition userDefinition) {
         return Schema.builder()
                 .type(Type.Known.OBJECT)
                 .description("user")
-                .properties(Map.of("feature", composeFeatureSchema()))
+                .properties(Map.of("feature", composeFeatureSchema(userDefinition)))
                 .required(List.of("feature"))
                 .build();
     }
 
-    private Schema composeFeatureSchema() {
-        Map<String, Schema> schemaProperties = userDefinition.featureDefinitions().values().stream()
+    private static Schema composeFeatureSchema(UserDefinition definition) {
+        Map<String, Schema> schemaProperties = definition.featureDefinitions().values().stream()
                 .collect(Collectors.toMap(
                         FeatureDefinition::name,
                         feature -> Schema.builder()
@@ -85,7 +92,7 @@ public class GeminiUserGenerator extends AbstractGeminiGenerator<User> implement
                                 .description(feature.generationCriteria().toString())
                                 .build()
                 ));
-        List<String> requiredFields = new ArrayList<>(userDefinition.featureDefinitions().keySet());
+        List<String> requiredFields = new ArrayList<>(definition.featureDefinitions().keySet());
         return Schema.builder()
                 .type(Type.Known.OBJECT)
                 .properties(schemaProperties)
