@@ -128,7 +128,7 @@ public class DatasetManager implements LabeledSampleProvider {
     private void doLabeling() {
         List<UnlabeledSample> unlabeledSamples = sampleRepository.findUnlabeledSamples();
         if(unlabeledSamples.isEmpty()) return;
-        log.info("레이블링되지 않은 {}개의 데이터를 레이블링 합니다.", unlabeledSamples.size());
+        log.info("레이블링되지 않은 {}개의 데이터를 {}를 사용하여 레이블링 합니다.", unlabeledSamples.size(), labeler.getModelName());
         labeler.label(unlabeledSamples, labelRepository::saveAll);
     }
 
