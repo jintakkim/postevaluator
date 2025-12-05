@@ -58,7 +58,7 @@ public record DefinitionProperties(UserDefinition userDefinition, PostDefinition
 
         @NoArgsConstructor(access = AccessLevel.PRIVATE)
         public static final class POST_FEATURE {
-            private static final FeatureDefinition AUTHOR_REPUTATION = new FeatureDefinition(
+            public static final FeatureDefinition AUTHOR_REPUTATION = new FeatureDefinition(
                     "reputation",
                     FeatureType.DOUBLE,
                     new NumberTypeGenerationCriteriaBuilder.MinMaxBuilder()
@@ -70,7 +70,7 @@ public record DefinitionProperties(UserDefinition userDefinition, PostDefinition
             /**
              * 좋아요 수
              */
-            private static final FeatureDefinition LIKE_COUNT = new FeatureDefinition(
+            public static final FeatureDefinition LIKE_COUNT = new FeatureDefinition(
                     "likeCount",
                     FeatureType.INTEGER,
                     NumberTypeGenerationCriteriaBuilder.logNormalDistributionBuilder()
@@ -82,7 +82,7 @@ public record DefinitionProperties(UserDefinition userDefinition, PostDefinition
             /**
              * 싫어요 수
              */
-            private static final FeatureDefinition DISLIKE_COUNT = new FeatureDefinition(
+            public static final FeatureDefinition DISLIKE_COUNT = new FeatureDefinition(
                     "dislikeCount",
                     FeatureType.INTEGER,
                     NumberTypeGenerationCriteriaBuilder.logNormalDistributionBuilder()
@@ -94,7 +94,7 @@ public record DefinitionProperties(UserDefinition userDefinition, PostDefinition
             /**
              * 조회 수
              */
-            private static final FeatureDefinition VIEW_COUNT = new FeatureDefinition(
+            public static final FeatureDefinition VIEW_COUNT = new FeatureDefinition(
                     "viewCount",
                     FeatureType.INTEGER,
                     NumberTypeGenerationCriteriaBuilder.logNormalDistributionBuilder()
@@ -104,9 +104,21 @@ public record DefinitionProperties(UserDefinition userDefinition, PostDefinition
                             .build()
             );
             /**
+             * 댓글 수
+             */
+            public static final FeatureDefinition COMMENT_COUNT = new FeatureDefinition(
+                    "commentCount",
+                    FeatureType.INTEGER,
+                    NumberTypeGenerationCriteriaBuilder.logNormalDistributionBuilder()
+                            .median(100L)
+                            .std(50.0)
+                            .addCondition("최소크기", "0보다 커야한다.")
+                            .build()
+            );
+            /**
              * 내용 요약 토픽들
              */
-            private static final FeatureDefinition CONTENT_TOPICS = new FeatureDefinition(
+            public static final FeatureDefinition CONTENT_TOPICS = new FeatureDefinition(
                     "contentTopics",
                     FeatureType.STRING,
                     new GenerationCriteriaBuilder()
@@ -116,7 +128,7 @@ public record DefinitionProperties(UserDefinition userDefinition, PostDefinition
             /**
              * 내용
              */
-            private static final FeatureDefinition CONTENT = new FeatureDefinition(
+            public static final FeatureDefinition CONTENT = new FeatureDefinition(
                     "content",
                     FeatureType.STRING,
                     new GenerationCriteriaBuilder()

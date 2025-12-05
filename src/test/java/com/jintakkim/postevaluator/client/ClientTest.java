@@ -6,11 +6,11 @@ import com.jintakkim.postevaluator.evaluation.EvaluateResult;
 import com.jintakkim.postevaluator.search.CombinationAccessor;
 import com.jintakkim.postevaluator.search.ParametricRecommendAlgorithm;
 import com.jintakkim.postevaluator.search.SearchResult;
-import com.jintakkim.postevaluator.test.ApplicationIntegrationTest;
+import com.jintakkim.postevaluator.test.BuiltInIntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-public class ClientTest extends ApplicationIntegrationTest {
+public class ClientTest extends BuiltInIntegrationTest {
     @Test
     @DisplayName("BuiltIn 피처 기반 추천 알고리즘 테스트")
     void simpleTest() {

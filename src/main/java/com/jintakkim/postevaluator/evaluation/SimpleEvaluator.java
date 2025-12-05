@@ -9,7 +9,7 @@ import java.util.List;
 
 public class SimpleEvaluator implements Evaluator {
     private final AlgorithmMetric algorithmMetric;
-    private final List<LabeledSample> labeledSamples;
+    protected final List<LabeledSample> labeledSamples;
 
     public SimpleEvaluator(AlgorithmMetric algorithmMetric, List<LabeledSample> labeledSamples) {
         this.algorithmMetric = algorithmMetric;
@@ -24,7 +24,7 @@ public class SimpleEvaluator implements Evaluator {
         return new EvaluateResult(algorithmMetric, metricResult.cost(), metricResult.topErrorOccurred());
     }
 
-    private List<SamplePrediction> predictScores(RecommendAlgorithm recommendAlgorithm) {
+    protected List<SamplePrediction> predictScores(RecommendAlgorithm recommendAlgorithm) {
         return labeledSamples.stream()
                 .map(sample -> new SamplePrediction(sample, recommendAlgorithm.calculateScore(sample)))
                 .toList();

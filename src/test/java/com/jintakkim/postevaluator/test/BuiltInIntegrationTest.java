@@ -9,7 +9,7 @@ import com.jintakkim.postevaluator.search.space.StepIncreaseSearchSpace;
 
 import java.util.Map;
 
-public class ApplicationIntegrationTest extends LocalFileDbIntegrationTest {
+public class BuiltInIntegrationTest extends LocalFileDbIntegrationTest {
     static ApplicationConfig applicationConfig = new ApplicationConfig(
             new GeminiProperties(null), //env를 통해 가져옴
             new DefinitionProperties(
