@@ -18,7 +18,7 @@ import java.util.Map;
 
 @Slf4j
 abstract class SingleUserGeminiLabeler {
-    private static final String MODEL_NAME = "gemini-2.0-flash";
+    private static final String MODEL_NAME = "gemini-2.5-flash";
 
     private final UserDefinition userDefinition;
     private final PostDefinition postDefinition;

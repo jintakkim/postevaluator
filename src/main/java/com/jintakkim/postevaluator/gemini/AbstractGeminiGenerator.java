@@ -10,7 +10,7 @@ import java.util.List;
 
 @Slf4j
 abstract class AbstractGeminiGenerator<T> {
-    protected static final String MODEL_NAME = "gemini-2.0-flash";
+    protected static final String MODEL_NAME = "gemini-2.5-flash";
     protected static final String CONTENT_TEMPLATE = "스키마를 반영해서 게시글 추천 테스트에 쓸 %s 데이터 셋 %d개를 만들어줘";
 
     protected final Client client;
