@@ -101,7 +101,7 @@ abstract class SingleUserGeminiLabeler {
                 .type(Type.Known.OBJECT)
                 .properties(Map.of(
                         "postId", Schema.builder().type(Type.Known.INTEGER).description("게시글 id").build(),
-                        "score", Schema.builder().type(Type.Known.NUMBER).description("0.0~1.0 사이의 스코어, 클 수록 좋다").build(),
+                        "score", Schema.builder().type(Type.Known.NUMBER).description("0.0~1.0 사이의 스코어, 소수점 4자리 이상 정밀하게 반환할 것, 클 수록 좋다").build(),
                         "reasoning", Schema.builder().type(Type.Known.STRING).description("스코어의 이유").build()
                 ))
                 .required(List.of("postId", "score", "reasoning"))
